@@ -17,30 +17,27 @@ class CommentController extends Controller
     }
 
     // PAG-POST NG COMMENT
-   public function store(Request $request, $slug) 
+   public function store(Request $request, $slug = null) 
 {
-    // 1. Validation
     $request->validate([
         'content_id' => 'required|exists:contents,id',
         'body'       => 'required|string|max:1000',
     ]);
 
     try {
-        // 2. Create Comment
         Comment::create([
             'user_id'      => Auth::id(),
-            'content_id'   => $request->content_id, 
-            'body'         => $request->body, // Gamitin ang 'body' (o 'content' depende sa migration mo)
-            'status'       => 'approved',     // FIX: Gawing 'approved' para lumitaw agad kay Georgia
+            'post_id'      => $request->content_id,
+            'content'      => $request->body, // ← key fix
+            'status'       => 'approved',
             'author_name'  => Auth::user()->name,
             'author_email' => Auth::user()->email,
         ]);
+        
 
-        // 3. Success Feedback
         return back()->with('success', 'Comment posted successfully!');
 
     } catch (\Exception $e) {
-        // I-log ang error para alam natin kung bakit nag-fail (e.g., SQL Column missing)
         return back()->with('error', 'Something went wrong: ' . $e->getMessage());
     }
 }
@@ -76,13 +73,23 @@ public function approve(Comment $comment)
 }
 
 public function subscriberIndex() 
-    {
-        $comments = Comment::where('user_id', Auth::id())
-                    ->with('post')
-                    ->latest()
-                    ->paginate(10);
-        return view('subscriber.comments.index', compact('comments'));
-    }
+{
+    // Article comments
+    $comments = Comment::where('user_id', Auth::id())
+                ->with(['post' => function($query) {
+                    $query->select('id', 'title', 'slug');
+                }])
+                ->latest()
+                ->paginate(10);
+
+    // News comments
+    $newsComments = \App\Models\NewsComment::where('user_id', Auth::id())
+                ->with('news')
+                ->latest()
+                ->get();
+
+    return view('subscriber.comments.index', compact('comments', 'newsComments'));
+}
 /**
  * Reject the specified comment.
  */

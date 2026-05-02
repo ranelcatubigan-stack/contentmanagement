@@ -14,10 +14,19 @@ class ContentController extends Controller
 {
     public function index()
     {
-    // Ipakita ang lahat ng posts sa kahit kanino
-    $contents = Content::latest()->paginate(15);
-    return view('contents.index', compact('contents'));
-}
+        $user = Auth::user();
+
+        // Admins see all posts, authors only see their own
+        $contents = $user->role === 'admin'
+            ? Content::latest()->paginate(15)
+            : Content::where('user_id', $user->id)->latest()->paginate(15);
+
+        // Pass these so the Create modal dropdown works
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('contents.index', compact('contents', 'categories', 'tags'));
+    }
 
     public function publicIndex()
     {
@@ -40,17 +49,17 @@ class ContentController extends Controller
         Gate::authorize('canCreateContent');
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string|min:10',
+            'title'       => 'required|string|max:255',
+            'body'        => 'required|string|min:10',
             'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
-            'status' => 'required|in:draft,published,hidden',
+            'tags'        => 'nullable|array',
+            'tags.*'      => 'exists:tags,id',
+            'status'      => 'required|in:draft,published,hidden',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+        $validated['slug']    = Str::slug($validated['title']);
         $validated['user_id'] = Auth::id();
-        
+
         if ($validated['status'] === 'published') {
             $validated['published_at'] = now();
         }
@@ -61,91 +70,88 @@ class ContentController extends Controller
             $content->tags()->attach($validated['tags']);
         }
 
-        return redirect()->route('contents.index')->with('success', 'Content created successfully!');
+        return redirect()->route('contents.index')
+            ->with('success', 'Content created successfully!');
     }
 
-    // FIXED: Para mag-match sa filename mong 'show.blade.php'
-    // Siguraduhin na "publicShow" ang pangalan nito
-public function show(Content $content) 
+    public function show(Content $content, Request $request)
 {
-    // Ito yung logic na in-update natin kanina para sa Category at Tags
     $content->load(['category', 'tags', 'user']);
-    
-    // Ito yung view na ginawa natin
-    return view('contents.show', compact('content'));
+
+    // Track view — once per IP per hour
+    $cacheKey = 'content_view_' . $content->id . '_' . $request->ip();
+    if (!\Cache::has($cacheKey)) {
+        \Cache::put($cacheKey, true, now()->addHours(1));
+        \Cache::increment('content_views_total_' . $content->id);
+    }
+
+    $viewCount = \Cache::get('content_views_total_' . $content->id, 0);
+
+    return view('contents.show', compact('content', 'viewCount'));
 }
 
-    /**
-     * EDIT METHOD
-     */
     public function edit(Content $content)
     {
-        // Siguraduhin na ang may-ari lang o admin ang pwedeng mag-edit
-        if (Auth::id() !== $content->user_id && !Auth::user()->isAdmin()) {
+        // Fixed: replaced isAdmin() with role check
+        if (Auth::id() !== $content->user_id && Auth::user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
 
-        $categories = Category::all();
-        $tags = Tag::all();
+        $categories  = Category::all();
+        $tags        = Tag::all();
         $selectedTags = $content->tags->pluck('id')->toArray();
 
         return view('contents.edit', compact('content', 'categories', 'tags', 'selectedTags'));
     }
 
-    /**
-     * UPDATE METHOD
-     */
     public function update(Request $request, Content $content)
     {
-        if (Auth::id() !== $content->user_id && !Auth::user()->isAdmin()) {
+        // Fixed: replaced isAdmin() with role check
+        if (Auth::id() !== $content->user_id && Auth::user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string|min:10',
+            'title'       => 'required|string|max:255',
+            'body'        => 'required|string|min:10',
             'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
-            'status' => 'required|in:draft,published,hidden',
+            'tags'        => 'nullable|array',
+            'tags.*'      => 'exists:tags,id',
+            'status'      => 'required|in:draft,published,hidden',
         ]);
 
-        // I-update ang slug kung nagbago ang title
         $validated['slug'] = Str::slug($validated['title']);
 
-        // Set published_at kung ngayon lang na-publish
         if ($validated['status'] === 'published' && !$content->published_at) {
             $validated['published_at'] = now();
         }
 
         $content->update($validated);
-
-        // I-sync ang tags (buburahin ang wala sa listahan, idadagdag ang bago)
         $content->tags()->sync($request->tags ?? []);
 
-        return redirect()->route('contents.index')->with('success', 'Content updated successfully!');
+        return redirect()->route('contents.index')
+            ->with('success', 'Content updated successfully!');
     }
 
-    /**
-     * DESTROY METHOD
-     */
     public function destroy(Content $content)
     {
-        if (Auth::id() !== $content->user_id && !Auth::user()->isAdmin()) {
+        // Fixed: replaced isAdmin() with role check
+        if (Auth::id() !== $content->user_id && Auth::user()->role !== 'admin') {
             abort(403, 'Unauthorized action.');
         }
 
-        // Tanggalin muna ang mga tags relationship bago i-delete ang post
         $content->tags()->detach();
         $content->delete();
 
-        return redirect()->route('contents.index')->with('success', 'Content deleted successfully!');
+        return redirect()->route('contents.index')
+            ->with('success', 'Content deleted successfully!');
     }
 
     public function moderation()
     {
         Gate::authorize('admin');
-        $contents = Content::latest()->paginate(15);
-        return view('contents.moderation', compact('contents'));
+        $contents = Content::with('user')->latest()->paginate(15);
+        $news = \App\Models\News::with(['user', 'comments'])->latest()->paginate(15);
+        return view('contents.moderation', compact('contents', 'news'));
     }
 }

@@ -74,33 +74,35 @@
         @endif
 
         {{-- APPROVE BUTTON --}}
-        @if($comment->status !== 'approved')
-            <form action="{{ route('comments.approve', $comment->id) }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-success btn-sm" title="Approve">
-                    <i class="bi bi-check-lg"></i>
-                </button>
-            </form>
-        @endif
+@if($comment->status !== 'approved')
+    <form action="{{ route('comments.approve', $comment->id) }}" method="POST">
+        @csrf
+        @method('PATCH')
+        <button type="submit" class="btn btn-success btn-sm" title="Approve">
+            <i class="bi bi-check-lg"></i>
+        </button>
+    </form>
+@endif
 
-        {{-- SPAM BUTTON --}}
-        @if($comment->status !== 'spam')
-            <form action="{{ route('comments.spam', $comment->id) }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-warning btn-sm text-dark" title="Mark as Spam">
-                    <i class="bi bi-exclamation-triangle"></i>
-                </button>
-            </form>
-        @endif
+{{-- SPAM BUTTON (keep only this one, remove the duplicate) --}}
+@if($comment->status !== 'spam')
+    <form action="{{ route('comments.spam', $comment->id) }}" method="POST">
+        @csrf
+        @method('PATCH')
+        <button type="submit" class="btn btn-warning btn-sm text-dark" title="Mark as Spam" onclick="return confirm('Mark this comment as spam?')">
+            <i class="bi bi-exclamation-triangle"></i>
+        </button>
+    </form>
+@endif
 
-        {{-- Delete Button --}}
-        <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this?')">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger btn-sm" title="Delete Permanent">
-                <i class="bi bi-trash"></i>
-            </button>
-        </form>
+{{-- Delete Button --}}
+<form action="{{ route('comments.destroy', $comment->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+        <i class="bi bi-trash"></i>
+    </button>
+</form>
     </div>
 </td>
         </tr>

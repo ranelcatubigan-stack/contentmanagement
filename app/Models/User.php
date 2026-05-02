@@ -33,7 +33,7 @@ class User extends Authenticatable
 
     public function isAuthor()
     {
-        return in_array($this->role, ['admin', 'editor', 'author']);
+        return $this->role === 'author'; // ← CORRECT: only author
     }
 
     public function isCreator()

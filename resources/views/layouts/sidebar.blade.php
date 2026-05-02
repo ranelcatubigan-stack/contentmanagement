@@ -1,94 +1,155 @@
 @php
     use Illuminate\Support\Str;
 
-    
-
-    // 1. Kunin ang role at gawing lowercase para safe sa kahit anong spelling (Subscriber vs subscriber)
     $userRole = Auth::check() ? Str::lower(trim(Auth::user()->role)) : '';
 
-    // 2. Define permissions
     $isAdmin = ($userRole === 'admin');
     $isEditor = ($userRole === 'editor');
-    
-    // Check if subscriber (case insensitive)
     $isSubscriber = ($userRole === 'subscriber');
-    
-    // Management access
+    $isAuthor = ($userRole === 'author');
+
     $isCreatorOrHigher = in_array($userRole, ['admin', 'editor', 'author', 'creator']);
-    
-    // Moderation access
     $canModerate = in_array($userRole, ['admin', 'editor']);
 @endphp
 
-<aside class="sidebar shadow-sm" style="background: #1a1a2e; color: white; min-height: 100vh; width: 250px; padding: 20px;">
+<aside class="sidebar shadow-sm" style="background: #1a1a2e; color: white; min-height: 100vh; width: 250px; padding: 20px; display: flex; flex-direction: column;">
     <h5 class="text-center py-3 border-bottom border-secondary mb-4">CMS PANEL</h5>
 
-    <ul class="nav flex-column">
-        {{-- ALWAYS VISIBLE --}}
+    <ul class="nav flex-column" style="flex: 1;">
+
+        {{-- DASHBOARD (hidden for subscriber) --}}
+        @if(!$isSubscriber)
         <li class="nav-item mb-2">
-            <a class="nav-link text-white {{ request()->is('dashboard*') ? 'opacity-100 fw-bold' : 'opacity-75' }}" href="{{ route('dashboard') }}">
+            <a class="nav-link text-white {{ request()->is('dashboard*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+               href="{{ route('dashboard') }}">
                 <i class="bi bi-speedometer2 me-2"></i> Dashboard
             </a>
         </li>
+        @endif
 
-        {{-- TEST: Lalabas ito sa lahat para ma-verify natin kung working ang route --}}
-        <li class="nav-item mb-2">
-            <a class="nav-link text-white {{ request()->is('my-comments*') ? 'opacity-100 fw-bold' : 'opacity-75' }}" href="{{ route('subscriber.comments') }}">
-                <i class="bi bi-chat-left-text me-2 text-info"></i> My Comments
-            </a>
-        </li>
-
-        {{-- MANAGEMENT SECTION --}}
-        @if($isCreatorOrHigher)
-            <div class="small text-uppercase text-secondary mt-3 mb-2" style="font-size: 0.7rem;">Management</div>
-            
+        {{-- SUBSCRIBER ONLY --}}
+        @if($isSubscriber)
             <li class="nav-item mb-2">
-                <a class="nav-link text-white" href="{{ route('contents.index') }}">
-                    <i class="bi bi-file-earmark-text me-2"></i> My Posts
+                <a class="nav-link text-white {{ request()->is('articles*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ route('posts.public.index') }}">
+                    <i class="bi bi-newspaper me-2"></i> Articles
                 </a>
             </li>
-            
-           @if(strtolower(auth()->user()->role) === 'admin' || strtolower(auth()->user()->role) === 'author')
-    <li class="nav-item mb-2">
-        <a class="nav-link text-white" href="{{ route('contents.create') }}">
-            <i class="bi bi-pencil-square me-2"></i> Create Post
-        </a>
-    </li>
-@endif
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->is('news*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ url('/news') }}">
+                    <i class="bi bi-broadcast me-2"></i> News
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->is('my-comments*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ route('subscriber.comments') }}">
+                    <i class="bi bi-chat-left-text me-2 text-info"></i> My Comments
+                </a>
+            </li>
+        @endif
+
+        {{-- AUTHOR ONLY --}}
+        @if($isAuthor)
+            <div class="small text-uppercase text-secondary mt-3 mb-2" style="font-size: 0.7rem;">My Work</div>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->routeIs('contents.index') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ route('contents.index') }}">
+                    <i class="bi bi-file-earmark-text me-2"></i> My Articles
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->routeIs('news.my') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ route('news.my') }}">
+                    <i class="bi bi-broadcast me-2"></i> My News
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->routeIs('contents.create') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ route('contents.create') }}">
+                    <i class="bi bi-pencil-square me-2"></i> Create Post
+                </a>
+            </li>
+            <div class="small text-uppercase text-secondary mt-3 mb-2" style="font-size: 0.7rem;">Browse</div>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->is('articles*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ route('posts.public.index') }}">
+                    <i class="bi bi-newspaper me-2"></i> Articles
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->is('news*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ url('/news') }}">
+                    <i class="bi bi-broadcast me-2"></i> News
+                </a>
+            </li>
+        @endif
+
+        {{-- EDITOR / ADMIN --}}
+        @if($isCreatorOrHigher && !$isAuthor)
+
+            <div class="small text-uppercase text-secondary mt-3 mb-2" style="font-size: 0.7rem;">Content</div>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->routeIs('contents.index') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                   href="{{ route('contents.index') }}">
+                    <i class="bi bi-file-earmark-text me-2"></i> My Content
+                </a>
+            </li>
+
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white {{ request()->routeIs('news.my') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                href="{{ route('news.my') }}">
+                    <i class="bi bi-broadcast me-2"></i> My News
+                </a>
+            </li>
 
             @if($canModerate)
+                <div class="small text-uppercase text-secondary mt-3 mb-2" style="font-size: 0.7rem;">Moderation</div>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{{ route('comments.index') }}">
+                    <a class="nav-link text-white {{ request()->routeIs('comments.*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                       href="{{ route('comments.index') }}">
                         <i class="bi bi-chat-dots me-2 text-warning"></i> Moderate Comments
                     </a>
                 </li>
             @endif
 
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white" href="{{ route('media.index') }}">
-                    <i class="bi bi-images me-2"></i> Media Gallery
-                </a>
-            </li>
+            {{-- ADMIN ONLY --}}
+            @if($isAdmin)
+                <div class="small text-uppercase text-secondary mt-3 mb-2" style="font-size: 0.7rem;">Administration</div>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white {{ request()->routeIs('users.*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                       href="{{ route('users.index') }}">
+                        <i class="bi bi-people-fill me-2"></i> Manage Users
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white {{ request()->routeIs('categories.*') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                       href="{{ route('categories.index') }}">
+                        <i class="bi bi-folder-fill me-2"></i> Categories
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white {{ request()->routeIs('contents.moderation') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                       href="{{ route('contents.moderation') }}">
+                        <i class="bi bi-shield-lock-fill me-2"></i> Moderation
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white {{ request()->routeIs('analytics') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
+                       href="{{ route('analytics') }}">
+                        <i class="bi bi-bar-chart-fill me-2"></i> Analytics
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-info small" href="{{ route('posts.public.index') }}">
+                        <i class="bi bi-box-arrow-up-right me-2"></i> View Site
+                    </a>
+                </li>
+            @endif
+
         @endif
 
-        {{-- SETTINGS (Admin Only) --}}
-        @if($isAdmin)
-            <div class="small text-uppercase text-secondary mt-3 mb-2" style="font-size: 0.7rem;">Settings</div>
-            <li class="nav-item mb-2">
-                <a class="nav-link text-warning" href="{{ route('users.index') }}">
-                    <i class="bi bi-people me-2"></i> Manage Users
-                </a>
-            </li>
-        @endif
-
-        {{-- VIEW SITE --}}
-        <li class="nav-item mt-3">
-            <a class="nav-link text-info small" href="{{ url('/') }}">
-                <i class="bi bi-box-arrow-up-right me-2"></i> View Live Site
-            </a>
-        </li>
-
-        {{-- LOGOUT --}}
+        {{-- LOGOUT (always at bottom) --}}
         <li class="nav-item mt-auto pt-4">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
@@ -97,5 +158,6 @@
                 </button>
             </form>
         </li>
+
     </ul>
 </aside>

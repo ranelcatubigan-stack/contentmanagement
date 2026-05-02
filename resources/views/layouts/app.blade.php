@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CMS') - Content Management System</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,35 +12,24 @@
 
     <style>
         :root {
-    /* Your New Outer Background Color */
-    --outer-bg: #e0f2fe; 
-    
-    /* Other Palette Colors */
-    --primary-navy: #0f172a;
-    --secondary-slate: #1e293b;
-    --accent-blue: #38bdf8;
-    --text-muted: #94a3b8;
-    
-    /* Status Colors */
-    --success: #10b981;
-    --danger: #ef4444;
-}
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --outer-bg: #e0f2fe; 
+            --primary-navy: #0f172a;
+            --secondary-slate: #1e293b;
+            --accent-blue: #38bdf8;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
         }
 
-       body {
-        /* Applying the Sky Blue to the entire outer background */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
             background-color: var(--outer-bg) !important;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: #334155;
             margin: 0;
         }
 
-        /* --- UPDATED SIDEBAR --- */
         .sidebar {
             background: linear-gradient(180deg, var(--primary-navy) 0%, var(--secondary-slate) 100%) !important;
             color: white;
@@ -50,7 +40,16 @@
             box-shadow: 4px 0 24px rgba(0,0,0,0.05);
             z-index: 1001;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
         }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-bottom: 20px;
+            }
 
         .sidebar .brand {
             padding: 30px 25px;
@@ -100,16 +99,25 @@
             color: var(--accent-blue);
         }
 
-        /* --- MAIN WRAPPER & TOPBAR --- */
+        /* Section labels inside sidebar */
+        .sidebar-label {
+            padding: 10px 25px 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.25);
+        }
+
         .main-wrapper {
             margin-left: 260px;
             min-height: 100vh;
             background-color: var(--outer-bg);
         }
+
         .topbar {
             background-color: #f5f7fa;
             padding: 18px 40px;
-            /* This changes the color of the line you highlighted */
             border-bottom: 2px solid #e2e8f0; 
             display: flex;
             justify-content: space-between;
@@ -132,11 +140,11 @@
             font-size: 14px;
         }
 
-        /* --- CONTENT CARDS --- */
         .content {
             padding: 40px;
             background-color: var(--outer-bg);
         }
+
         .card {
             border: none;
             border-radius: 16px;
@@ -151,7 +159,6 @@
             border-radius: 16px 16px 0 0 !important;
         }
 
-        /* Table Style Polish */
         .table thead th {
             background-color: #f8fafc;
             text-transform: uppercase;
@@ -177,66 +184,125 @@
         </div>
 
         @auth
-            {{-- ALWAYS VISIBLE --}}
-            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <i class="bi bi-grid-1x2-fill"></i> Dashboard
-            </a>
 
-            {{-- 1. ADDED: MY COMMENTS (Lilitaw lang para sa Subscriber) --}}
-            @if(Auth::user()->role === 'subscriber')
+            {{-- ================================ --}}
+            {{-- SUBSCRIBER ROLE                  --}}
+            {{-- ================================ --}}
+            @if(Auth::user()->isSubscriber())
                 <a href="{{ route('subscriber.comments') }}" class="{{ request()->routeIs('subscriber.comments') ? 'active' : '' }}">
-                    <i class="bi bi-chat-left-text-fill text-info"></i> My Comments
+                    <i class="bi bi-chat-left-text-fill"></i> My Comments
                 </a>
-            @endif
+                <hr>
+                <div class="sidebar-label">Browse</div>
+                <a href="{{ route('posts.public.index') }}" class="{{ request()->routeIs('posts.public.*') ? 'active' : '' }}">
+                    <i class="bi bi-newspaper"></i> Articles
+                </a>
+                <a href="{{ url('/news') }}" class="{{ request()->is('news*') ? 'active' : '' }}">
+                    <i class="bi bi-broadcast"></i> News
+                </a>
 
-            {{-- VISIBLE TO CREATOR, AUTHOR, EDITOR, ADMIN --}}
-            @if(Auth::user()->canCreateContent())
+            {{-- ================================ --}}
+            {{-- AUTHOR ROLE                      --}}
+            {{-- ================================ --}}
+            @elseif(Auth::user()->isAuthor())
+                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                </a>
+                <hr>
+                <div class="sidebar-label">My Work</div>
                 <a href="{{ route('contents.index') }}" class="{{ request()->routeIs('contents.index') ? 'active' : '' }}">
-                    <i class="bi bi-file-earmark-text-fill"></i> My Content
+                    <i class="bi bi-file-earmark-text-fill"></i> My Articles
                 </a>
-                <a href="{{ route('contents.create') }}" class="{{ request()->routeIs('contents.create') ? 'active' : '' }}">
-                    <i class="bi bi-plus-square-fill"></i> Create Post
-                </a>
-                <a href="{{ route('media.index') }}" class="{{ request()->routeIs('media.*') ? 'active' : '' }}">
-                    <i class="bi bi-images"></i> Media Gallery
-                </a>
-            @endif
-
-            {{-- VISIBLE TO EDITOR OR ADMIN (Moderate Comments) --}}
-            @if(Auth::user()->isEditor() || Auth::user()->isAdmin())
+                <a href="{{ route('news.my') }}" class="{{ request()->routeIs('news.my') ? 'active' : '' }}">
+                    <i class="bi bi-broadcast"></i> My News
+                </a>    
                 <hr>
-                <a href="{{ route('comments.index') }}" class="{{ request()->routeIs('comments.*') ? 'active' : '' }}">
-                    <i class="bi bi-chat-square-dots-fill"></i>Comments
+                <div class="sidebar-label">Browse</div>
+                <a href="{{ route('posts.public.index') }}" class="{{ request()->routeIs('posts.public.*') ? 'active' : '' }}">
+                    <i class="bi bi-newspaper"></i> Articles
                 </a>
-            @endif
+                <a href="{{ url('/news') }}" class="{{ request()->is('news*') ? 'active' : '' }}">
+                    <i class="bi bi-broadcast"></i> News
+                </a>
 
-            {{-- ADMIN ONLY SECTION --}}
-            @if(Auth::user()->isAdmin())
+            {{-- ================================ --}}
+            {{-- EDITOR / ADMIN / CREATOR ROLES   --}}
+            {{-- ================================ --}}
+            {{-- EDITOR / ADMIN / CREATOR ROLES --}}
+@else
+    <a href="{{ route('dashboard') }}" ...>
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+    </a>
+
+    @if(Auth::user()->canCreateContent())
+        <hr>
+        <div class="sidebar-label">Content</div>
+
+        <a href="{{ route('contents.index') }}" 
+        class="{{ request()->routeIs('contents.index') ? 'active' : '' }}">
+            <i class="bi bi-file-earmark-text-fill"></i> My Content
+        </a>
+
+        <a href="{{ route('news.my') }}" 
+        class="{{ request()->routeIs('news.my') ? 'active' : '' }}">
+            <i class="bi bi-broadcast"></i> My News
+        </a>
+    @endif
+
+    @if(Auth::user()->isEditor() || Auth::user()->isAdmin())
+        <hr>
+        <div class="sidebar-label">Moderation</div>
+        <a href="{{ route('comments.index') }}" ...>
+            <i class="bi bi-chat-square-dots-fill"></i> Comments
+        </a>
+    @endif
+
+    @if(Auth::user()->isAdmin())
+        <hr>
+        <div class="sidebar-label">Administration</div>
+        <a href="{{ route('users.index') }}" ...>
+            <i class="bi bi-people-fill"></i> Manage Users
+        </a>
+        <a href="{{ route('categories.index') }}" ...>
+            <i class="bi bi-folder-fill"></i> Categories
+        </a>
+        <a href="{{ route('contents.moderation') }}" ...>
+            <i class="bi bi-shield-lock-fill"></i> Moderation
+        </a>
+        <a href="{{ route('analytics') }}" ...>
+            <i class="bi bi-bar-chart-fill"></i> Analytics
+        </a>
+    @endif
+
+    <hr>
+
+    {{-- ADD THESE BROWSE LINKS --}}
+    <div class="sidebar-label">Browse</div>
+    <a href="{{ route('posts.public.index') }}" 
+       class="{{ request()->routeIs('posts.public.*') ? 'active' : '' }}">
+        <i class="bi bi-newspaper"></i> Articles
+    </a>
+    <a href="{{ url('/news') }}" 
+       class="{{ request()->is('news*') ? 'active' : '' }}">
+        <i class="bi bi-broadcast"></i> News
+    </a>
+
+@endif
+
+            {{-- ================================ --}}
+            {{-- LOGOUT (all roles)               --}}
+            {{-- ================================ --}}
+            <div class="sidebar-bottom">
                 <hr>
-                <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                    <i class="bi bi-people-fill"></i> Users
+                <a href="{{ route('logout') }}" class="text-danger"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="bi bi-power"></i> Logout
                 </a>
-                <a href="{{ route('categories.index') }}" class="{{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                    <i class="bi bi-folder-fill"></i> Categories
-                </a>
-                <a href="{{ route('contents.moderation') }}" class="{{ request()->routeIs('contents.moderation') ? 'active' : '' }}">
-                    <i class="bi bi-shield-lock-fill"></i> Moderation
-                </a>
-                <a href="{{ route('analytics') }}" class="{{ request()->routeIs('analytics') ? 'active' : '' }}">
-                    <i class="bi bi-bar-chart-fill"></i> Analytics
-                </a>
-            @endif
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            </div>
 
-            <hr>
-            <a href="{{ route('posts.public.index') }}">
-                <i class="bi bi-browser-safari text-accent"></i> View Site
-            </a>
-            <a href="{{ route('logout') }}" class="text-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="bi bi-power"></i> Logout
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
         @endauth
     </aside>
 
@@ -245,12 +311,15 @@
             <h1>@yield('page-title', 'Dashboard')</h1>
             @auth
             <div class="user-menu">
-                <div class="user-info d-flex align-items: center; gap: 12px;">
+                <div class="user-info d-flex align-items-center gap-3">
                     <div class="text-end">
                         <div class="user-name">{{ Auth::user()->name }}</div>
-                        <div class="badge bg-light text-primary border" style="font-size: 10px;">{{ strtoupper(Auth::user()->role) }}</div>
+                        <div class="badge bg-light text-primary border" style="font-size: 10px;">
+                            {{ strtoupper(Auth::user()->role) }}
+                        </div>
                     </div>
-                    <div class="avatar bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px; font-weight: 700;">
+                    <div class="avatar bg-primary text-white d-flex align-items-center justify-content-center rounded-circle"
+                         style="width: 40px; height: 40px; font-weight: 700;">
                         {{ substr(Auth::user()->name, 0, 1) }}
                     </div>
                 </div>

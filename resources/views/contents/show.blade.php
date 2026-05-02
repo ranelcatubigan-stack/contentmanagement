@@ -11,8 +11,13 @@
             <article class="mb-5">
                 <header class="mb-4">
                     <h1 class="fw-bolder mb-1">{{ $content->title }}</h1>
-                    <div class="text-muted fst-italic mb-2">
-                        Posted on {{ $content->created_at->format('M d, Y') }} by {{ $content->user->name ?? 'Author' }}
+                    <div class="text-muted fst-italic mb-2 d-flex align-items-center gap-3 flex-wrap">
+                        <span>Posted on {{ $content->created_at->format('M d, Y') }} by {{ $content->user->name ?? 'Author' }}</span>
+                        <span class="d-flex align-items-center gap-1" style="font-style:normal;">
+                            <i class="bi bi-eye-fill text-primary"></i>
+                            <strong>{{ number_format($viewCount) }}</strong>
+                            {{ $viewCount == 1 ? 'view' : 'views' }}
+                        </span>
                     </div>
                     
                     {{-- Category & Tags --}}
@@ -68,7 +73,7 @@
                                 </div>
                             @endif
 
-                            <form action="{{ route('comments.store', $content) }}" method="POST">
+                            <form action="/posts/{{ $content->slug }}/comments" method="POST">
                                 @csrf
                                 {{-- Link to Content --}}
                                 <input type="hidden" name="content_id" value="{{ $content->id }}">
@@ -93,31 +98,32 @@
             <section>
                 <h4 class="fw-bold mb-4">
                     <i class="bi bi-chat-left-text me-2"></i>
-                    Comments ({{ $content->comments->where('status', 'approved')->count() }})
+                    Comments ({{ $content->comments()->where('status', 'approved')->count() }})
                 </h4>
 
-                @forelse($content->comments->where('status', 'approved') as $comment)
-                    <div class="d-flex mb-4 p-3 bg-white border rounded-3 shadow-sm">
-                        <div class="flex-shrink-0">
-                            <img class="rounded-circle border" src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name ?? 'User') }}&background=random" alt="..." width="50">
-                        </div>
-                        <div class="ms-3 w-100">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="fw-bold mb-0">{{ $comment->user->name ?? 'Anonymous' }}</h6>
-                                <span class="text-muted small">{{ $comment->created_at->diffForHumans() }}</span>
-                            </div>
-                            <div class="mt-2 text-dark">
-                                {{-- Siniguro nating 'content' or 'body' ang gamit --}}
-                                {{ $comment->content ?? $comment->body }}
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-chat-square-dots fs-1 mb-3 d-block opacity-25"></i>
-                        No comments yet. Be the first to share your thoughts!
-                    </div>
-                @endforelse
+                @forelse($content->comments()->where('status', 'approved')->get() as $comment)
+    <div class="d-flex mb-4 p-3 bg-white border rounded-3 shadow-sm">
+        <div class="flex-shrink-0">
+            <img class="rounded-circle border" 
+                 src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name ?? 'User') }}&background=random" 
+                 alt="..." width="50">
+        </div>
+        <div class="ms-3 w-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0">{{ $comment->user->name ?? 'Anonymous' }}</h6>
+                <span class="text-muted small">{{ $comment->created_at->diffForHumans() }}</span>
+            </div>
+            <div class="mt-2 text-dark">
+                {{ $comment->content }}
+            </div>
+        </div>
+    </div>
+@empty
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-chat-square-dots fs-1 mb-3 d-block opacity-25"></i>
+        No comments yet. Be the first to share your thoughts!
+    </div>
+@endforelse
             </section>
 
             {{-- 4. THE BACK BUTTON FIX --}}
