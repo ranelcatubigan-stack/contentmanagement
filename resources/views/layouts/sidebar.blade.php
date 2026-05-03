@@ -92,7 +92,7 @@
             <li class="nav-item mb-2">
                 <a class="nav-link text-white {{ request()->routeIs('contents.index') ? 'opacity-100 fw-bold' : 'opacity-75' }}"
                    href="{{ route('contents.index') }}">
-                    <i class="bi bi-file-earmark-text me-2"></i> My Content
+                    <i class="bi bi-file-earmark-text me-2"></i> My Articles
                 </a>
             </li>
 

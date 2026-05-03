@@ -4,107 +4,44 @@
 
 @section('styles')
 <style>
-    .analytics-wrap { max-width: 1200px; margin: 0 auto; }
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
-    /* ── Gradient Stat Cards ── */
-    .stat-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        margin-bottom: 24px;
+    .analytics-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        font-family: 'Space Grotesk', sans-serif;
     }
 
-    .stat-card {
-        border-radius: 16px;
-        padding: 24px;
-        color: white;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    }
-
-    .stat-card .bg-icon {
-        position: absolute;
-        right: 20px; bottom: 10px;
-        font-size: 56px;
-        opacity: 0.15;
-    }
-
-    .stat-card.blue  { background: linear-gradient(135deg, #1e6fdb, #38b6ff); }
-    .stat-card.teal  { background: linear-gradient(135deg, #0d9488, #2dd4bf); }
-    .stat-card.rose  { background: linear-gradient(135deg, #be123c, #fb7185); }
-
-    .stat-label {
+    /* ── Section Label ── */
+    .section-label {
         font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.2px;
-        opacity: 0.85;
-        margin-bottom: 8px;
-    }
-
-    .stat-value {
-        font-size: 2.8rem;
-        font-weight: 800;
-        line-height: 1;
-    }
-
-    /* ── Quick Actions ── */
-    .quick-actions-card {
-        background: white;
-        border-radius: 16px;
-        padding: 16px 24px;
-        box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-        border: 1px solid #f1f5f9;
-        margin-bottom: 24px;
+        letter-spacing: 2px;
+        color: #94a3b8;
+        margin-bottom: 12px;
         display: flex;
         align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
+        gap: 8px;
     }
 
-    .quick-label {
-        font-weight: 700;
-        font-size: 13px;
-        color: #0f172a;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        white-space: nowrap;
+    .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e2e8f0;
     }
 
-    .quick-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 500;
-        text-decoration: none;
-        border: 1.5px solid #e2e8f0;
-        color: #475569;
-        background: white;
-        transition: all 0.2s;
-    }
-
-    .quick-btn:hover {
-        border-color: #0ea5e9;
-        color: #0ea5e9;
-        background: #f0f9ff;
-    }
-
-    /* ── Panel Cards ── */
-    .panel-card {
+    /* ── Panel ── */
+    .panel {
         background: white;
         border-radius: 16px;
-        box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-        border: 1px solid #f1f5f9;
+        border: 1px solid #e2e8f0;
         overflow: hidden;
-        height: 100%;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
 
-    .panel-header {
+    .panel-head {
         padding: 16px 20px;
         border-bottom: 1px solid #f1f5f9;
         display: flex;
@@ -122,45 +59,84 @@
         margin: 0;
     }
 
-    /* ── Status Rows ── */
-    .status-row {
+    .panel-count {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 600;
+        background: #f1f5f9;
+        color: #64748b;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    /* ── Big Metric Cards ── */
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 28px;
+    }
+
+    .metric-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .metric-card .m-icon {
+        width: 40px; height: 40px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 12px 20px;
-        border-bottom: 1px solid #f8fafc;
+        justify-content: center;
+        font-size: 18px;
+        margin-bottom: 12px;
     }
 
-    .status-row:last-child { border-bottom: none; }
-
-    .status-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
+    .metric-card .m-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+        margin-bottom: 4px;
     }
 
-    .pill-published { background: #dcfce7; color: #16a34a; }
-    .pill-draft     { background: #fef9c3; color: #ca8a04; }
-    .pill-hidden    { background: #f1f5f9; color: #64748b; }
-    .pill-approved  { background: #dcfce7; color: #16a34a; }
-    .pill-pending   { background: #fef9c3; color: #ca8a04; }
-    .pill-spam      { background: #fee2e2; color: #dc2626; }
-
-    .status-count {
+    .metric-card .m-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 2rem;
         font-weight: 700;
-        font-size: 15px;
         color: #0f172a;
-        background: #f1f5f9;
-        padding: 3px 12px;
-        border-radius: 20px;
+        line-height: 1;
     }
 
-    /* ── Author Rows ── */
-    .author-row {
+    .metric-card .m-sub {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 6px;
+    }
+
+    .mc-blue  .m-icon { background: #eff6ff; color: #2563eb; }
+    .mc-teal  .m-icon { background: #f0fdfa; color: #0d9488; }
+    .mc-rose  .m-icon { background: #fff1f2; color: #e11d48; }
+    .mc-violet .m-icon { background: #f5f3ff; color: #7c3aed; }
+
+    .mc-blue  { border-top: 3px solid #2563eb; }
+    .mc-teal  { border-top: 3px solid #0d9488; }
+    .mc-rose  { border-top: 3px solid #e11d48; }
+    .mc-violet { border-top: 3px solid #7c3aed; }
+
+    /* ── Rank Rows ── */
+    .rank-row {
         display: flex;
         align-items: center;
         gap: 12px;
@@ -169,30 +145,42 @@
         transition: background 0.15s;
     }
 
-    .author-row:hover { background: #f8fafc; }
-    .author-row:last-child { border-bottom: none; }
+    .rank-row:hover { background: #f8fafc; }
+    .rank-row:last-child { border-bottom: none; }
 
-    .author-avatar {
-        width: 38px; height: 38px;
+    .rank-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        color: #cbd5e1;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .rank-num.top { color: #f59e0b; }
+
+    .rank-avatar {
+        width: 36px; height: 36px;
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 800;
-        font-size: 15px;
+        font-size: 14px;
         color: white;
         flex-shrink: 0;
     }
 
-    .av-blue   { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
-    .av-violet { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-    .av-rose   { background: linear-gradient(135deg, #f43f5e, #e11d48); }
-    .av-teal   { background: linear-gradient(135deg, #14b8a6, #0d9488); }
-    .av-amber  { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .av-1 { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+    .av-2 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+    .av-3 { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+    .av-4 { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .av-5 { background: linear-gradient(135deg, #f59e0b, #d97706); }
 
-    .author-info { flex: 1; min-width: 0; }
+    .rank-info { flex: 1; min-width: 0; }
 
-    .author-name {
+    .rank-name {
         font-weight: 600;
         font-size: 13px;
         color: #0f172a;
@@ -201,23 +189,169 @@
         text-overflow: ellipsis;
     }
 
-    .author-role-badge {
+    .rank-meta {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 1px;
+    }
+
+    .rank-badge {
         font-size: 10px;
         font-weight: 700;
-        padding: 2px 7px;
+        padding: 2px 8px;
         border-radius: 10px;
         text-transform: uppercase;
         letter-spacing: 0.4px;
     }
 
-    .role-admin  { background: #fef3c7; color: #92400e; }
-    .role-author { background: #e0f2fe; color: #0284c7; }
+    .badge-admin  { background: #fef3c7; color: #92400e; }
+    .badge-author { background: #e0f2fe; color: #0284c7; }
 
-    .author-count      { font-weight: 800; font-size: 16px; color: #0f172a; text-align: right; }
-    .author-count-sub  { font-size: 10px; color: #94a3b8; text-align: right; }
+    .rank-stat {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .rank-stat-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 15px;
+        color: #0f172a;
+    }
+
+    .rank-stat-label {
+        font-size: 10px;
+        color: #94a3b8;
+    }
+
+    /* ── Progress Bar ── */
+    .progress-row {
+        padding: 12px 20px;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    .progress-row:last-child { border-bottom: none; }
+
+    .progress-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    .progress-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .progress-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .progress-bar-wrap {
+        height: 6px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.8s ease;
+    }
+
+    /* ── News Engagement Row ── */
+    .news-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        border-bottom: 1px solid #f8fafc;
+        transition: background 0.15s;
+    }
+
+    .news-row:hover { background: #f8fafc; }
+    .news-row:last-child { border-bottom: none; }
+
+    .news-cat {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: #e0f2fe;
+        color: #0284c7;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .news-title {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0f172a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .news-stats {
+        display: flex;
+        gap: 16px;
+        flex-shrink: 0;
+    }
+
+    .news-stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    /* ── Comment Health ── */
+    .health-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+    }
+
+    .health-item {
+        padding: 20px;
+        text-align: center;
+        border-right: 1px solid #f1f5f9;
+    }
+
+    .health-item:last-child { border-right: none; }
+
+    .health-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.8rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .health-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+    }
 
     @media (max-width: 768px) {
-        .stat-grid { grid-template-columns: 1fr; }
+        .metric-grid { grid-template-columns: repeat(2, 1fr); }
+        .health-grid { grid-template-columns: 1fr; }
     }
 </style>
 @endsection
@@ -225,140 +359,269 @@
 @section('content')
 <div class="analytics-wrap">
 
-    {{-- ── STAT CARDS ── --}}
     @php
-    $totalPosts    = $contentStats->sum('total');
-    $totalComments = $commentStats->sum('total');
-    $totalUsers    = \App\Models\User::count();
-    $totalNews     = \App\Models\News::count();
+        $totalPosts    = $contentStats->sum('total');
+        $totalComments = $commentStats->sum('total');
+        $totalUsers    = \App\Models\User::count();
+        $totalNews     = \App\Models\News::count();
+
+        $approvedComments = $commentStats->where('status', 'approved')->first()->total ?? 0;
+        $pendingComments  = $commentStats->where('status', 'pending')->first()->total ?? 0;
+        $spamComments     = $commentStats->where('status', 'spam')->first()->total ?? 0;
+        $approvalRate     = $totalComments > 0 ? round(($approvedComments / $totalComments) * 100) : 0;
+
+        $topNewsItems = \App\Models\News::with(['user', 'comments'])
+            ->withCount('comments')
+            ->orderByDesc('likes_count')
+            ->limit(5)
+            ->get();
+
+        $topCommentedArticles = \App\Models\Content::withCount('comments')
+            ->orderByDesc('comments_count')
+            ->limit(5)
+            ->get();
+
+        $filteredAuthors = $topAuthors->whereIn('role', ['admin','author']);
+        $maxPosts = $filteredAuthors->max('contents_count') ?: 1;
+
+        $avatarClasses = ['av-1','av-2','av-3','av-4','av-5'];
     @endphp
-    <div class="stat-grid">
-        <div class="stat-card blue">
-            <div class="stat-label">Total Users</div>
-            <div class="stat-value">{{ $totalUsers }}</div>
-            <i class="bi bi-people-fill bg-icon"></i>
+
+    {{-- ── METRIC CARDS ── --}}
+    <div class="section-label"><span>Overview</span></div>
+    <div class="metric-grid mb-4">
+        <div class="metric-card mc-blue">
+            <div class="m-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="m-label">Total Users</div>
+            <div class="m-value">{{ $totalUsers }}</div>
+            <div class="m-sub">Across all roles</div>
         </div>
-        <div class="stat-card teal">
-            <div class="stat-label">Total Posts</div>
-            <div class="stat-value">{{ $totalPosts }}</div>
-            <i class="bi bi-file-earmark-text-fill bg-icon"></i>
+        <div class="metric-card mc-teal">
+            <div class="m-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+            <div class="m-label">Total Articles</div>
+            <div class="m-value">{{ $totalPosts }}</div>
+            <div class="m-sub">{{ $contentStats->where('status','published')->first()->total ?? 0 }} published</div>
         </div>
-        <div class="stat-card rose">
-            <div class="stat-label">Total Comments</div>
-            <div class="stat-value">{{ $totalComments }}</div>
-            <i class="bi bi-chat-dots-fill bg-icon"></i>
+        <div class="metric-card mc-rose">
+            <div class="m-icon"><i class="bi bi-chat-dots-fill"></i></div>
+            <div class="m-label">Total Comments</div>
+            <div class="m-value">{{ $totalComments }}</div>
+            <div class="m-sub">{{ $approvalRate }}% approval rate</div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #7c3aed, #a78bfa);">
-            <div class="stat-label">Total News</div>
-            <div class="stat-value">{{ $totalNews }}</div>
-            <i class="bi bi-newspaper bg-icon"></i>
+        <div class="metric-card mc-violet">
+            <div class="m-icon"><i class="bi bi-newspaper"></i></div>
+            <div class="m-label">Total News</div>
+            <div class="m-value">{{ $totalNews }}</div>
+            <div class="m-sub">{{ $topNewsItems->sum('likes_count') }} total likes</div>
         </div>
     </div>
 
+    {{-- ── ROW 1: Authors Leaderboard + Comment Health ── --}}
+    <div class="section-label"><span>Performance</span></div>
+    <div class="row g-3 mb-3">
 
-    {{-- ── TWO COLUMN LAYOUT ── --}}
-    <div class="row g-4">
+        {{-- Authors Leaderboard --}}
+        <div class="col-lg-6">
+            <div class="panel">
+                <div class="panel-head">
+                    <h6 class="panel-title">
+                        <i class="bi bi-trophy-fill text-warning"></i>
+                        Authors Leaderboard
+                    </h6>
+                    <span class="panel-count">Top {{ $filteredAuthors->count() }}</span>
+                </div>
+                @forelse($filteredAuthors as $i => $author)
+                <div class="rank-row">
+                    <span class="rank-num {{ $i === 0 ? 'top' : '' }}">#{{ $i + 1 }}</span>
+                    <div class="rank-avatar {{ $avatarClasses[$i % 5] }}">
+                        {{ strtoupper(substr($author->name, 0, 1)) }}
+                    </div>
+                    <div class="rank-info">
+                        <div class="rank-name">{{ $author->name }}</div>
+                        <span class="rank-badge {{ $author->role === 'admin' ? 'badge-admin' : 'badge-author' }}">
+                            {{ ucfirst($author->role) }}
+                        </span>
+                    </div>
+                    <div class="rank-stat">
+                        <div class="rank-stat-val">{{ $author->contents_count }}</div>
+                        <div class="rank-stat-label">articles</div>
+                    </div>
+                </div>
+                @empty
+                <div class="p-4 text-center text-muted">No authors yet</div>
+                @endforelse
+            </div>
+        </div>
 
-        {{-- LEFT: Content Status + Comment Status --}}
-        <div class="col-lg-6 d-flex flex-column gap-4">
+        {{-- Comment Health + Content Breakdown --}}
+        <div class="col-lg-6 d-flex flex-column gap-3">
 
-            {{-- Content by Status --}}
-            <div class="panel-card">
-                <div class="panel-header">
+            {{-- Comment Health --}}
+            <div class="panel">
+                <div class="panel-head">
+                    <h6 class="panel-title">
+                        <i class="bi bi-heart-pulse-fill text-danger"></i>
+                        Comment Health
+                    </h6>
+                    <span class="panel-count">{{ $approvalRate }}% healthy</span>
+                </div>
+                <div class="health-grid">
+                    <div class="health-item">
+                        <div class="health-val" style="color:#16a34a;">{{ $approvedComments }}</div>
+                        <div class="health-label">Approved</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-val" style="color:#ca8a04;">{{ $pendingComments }}</div>
+                        <div class="health-label">Pending</div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-val" style="color:#dc2626;">{{ $spamComments }}</div>
+                        <div class="health-label">Spam</div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Content Breakdown --}}
+            <div class="panel">
+                <div class="panel-head">
                     <h6 class="panel-title">
                         <i class="bi bi-bar-chart-fill text-primary"></i>
-                        Content by Status
+                        Content Breakdown
                     </h6>
                 </div>
                 @foreach($contentStats as $stat)
-                <div class="status-row">
-                    <span class="status-pill
-                        @if($stat->status === 'published') pill-published
-                        @elseif($stat->status === 'draft') pill-draft
-                        @else pill-hidden @endif">
-                        <i class="bi
-                            @if($stat->status === 'published') bi-check-circle-fill
-                            @elseif($stat->status === 'draft') bi-pencil-fill
-                            @else bi-eye-slash-fill @endif"></i>
-                        {{ ucfirst($stat->status) }}
-                    </span>
-                    <span class="status-count">{{ $stat->total }}</span>
+                @php
+                    $pct = $totalPosts > 0 ? round(($stat->total / $totalPosts) * 100) : 0;
+                    $colors = ['published' => '#16a34a', 'draft' => '#ca8a04', 'hidden' => '#94a3b8'];
+                    $color = $colors[$stat->status] ?? '#94a3b8';
+                @endphp
+                <div class="progress-row">
+                    <div class="progress-top">
+                        <span class="progress-label">
+                            <span style="width:8px;height:8px;border-radius:50%;background:{{ $color }};display:inline-block;"></span>
+                            {{ ucfirst($stat->status) }}
+                        </span>
+                        <span class="progress-val">{{ $stat->total }} <span style="color:#94a3b8;font-size:11px;">({{ $pct }}%)</span></span>
+                    </div>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" style="width:{{ $pct }}%; background:{{ $color }};"></div>
+                    </div>
                 </div>
                 @endforeach
             </div>
 
-            {{-- Comments by Status --}}
-            <div class="panel-card">
-                <div class="panel-header">
-                    <h6 class="panel-title">
-                        <i class="bi bi-chat-dots-fill text-success"></i>
-                        Comments by Status
-                    </h6>
-                </div>
-                @forelse($commentStats as $stat)
-                <div class="status-row">
-                    <span class="status-pill
-                        @if($stat->status === 'approved') pill-approved
-                        @elseif($stat->status === 'pending') pill-pending
-                        @elseif($stat->status === 'spam') pill-spam
-                        @else pill-hidden @endif">
-                        <i class="bi
-                            @if($stat->status === 'approved') bi-check-circle-fill
-                            @elseif($stat->status === 'pending') bi-clock-fill
-                            @elseif($stat->status === 'spam') bi-shield-x-fill
-                            @else bi-dash-circle @endif"></i>
-                        {{ ucfirst($stat->status) }}
-                    </span>
-                    <span class="status-count">{{ $stat->total }}</span>
-                </div>
-                @empty
-                <div class="p-4 text-center text-muted">No comments yet</div>
-                @endforelse
-            </div>
-
         </div>
-
-        {{-- RIGHT: Top Authors --}}
-        <div class="col-lg-6">
-            <div class="panel-card">
-                <div class="panel-header">
-                    <h6 class="panel-title">
-                        <i class="bi bi-trophy-fill text-warning"></i>
-                        Top Authors
-                    </h6>
-                    <span style="background:#f1f5f9; color:#64748b; font-size:11px;
-                                 font-weight:600; padding:3px 10px; border-radius:20px;">
-                        Admin & Author only
-                    </span>
-                </div>
-                @php
-                    $avatarClasses   = ['av-blue','av-violet','av-rose','av-teal','av-amber'];
-                    $filteredAuthors = $topAuthors->whereIn('role', ['admin','author']);
-                    $i = 0;
-                @endphp
-                @forelse($filteredAuthors as $author)
-                <div class="author-row">
-                    <div class="author-avatar {{ $avatarClasses[$i % count($avatarClasses)] }}">
-                        {{ strtoupper(substr($author->name, 0, 1)) }}
-                    </div>
-                    <div class="author-info">
-                        <div class="author-name">{{ $author->name }}</div>
-                        <span class="author-role-badge {{ $author->role === 'admin' ? 'role-admin' : 'role-author' }}">
-                            {{ ucfirst($author->role) }}
-                        </span>
-                    </div>
-                    <div>
-                        <div class="author-count">{{ $author->contents_count }}</div>
-                        <div class="author-count-sub">posts</div>
-                    </div>
-                </div>
-                @php $i++; @endphp
-                @empty
-                <div class="p-4 text-center text-muted">No authors found</div>
-                @endforelse
-            </div>
-        </div>
-
     </div>
+
+    {{-- ── ROW 2: Most Commented Articles + News Engagement ── --}}
+    <div class="section-label"><span>Engagement</span></div>
+    <div class="row g-3 mb-3">
+
+        {{-- Most Commented Articles --}}
+        <div class="col-lg-6">
+            <div class="panel">
+                <div class="panel-head">
+                    <h6 class="panel-title">
+                        <i class="bi bi-chat-square-dots-fill text-info"></i>
+                        Most Commented Articles
+                    </h6>
+                </div>
+                @forelse($topCommentedArticles as $i => $article)
+                <div class="rank-row">
+                    <span class="rank-num {{ $i === 0 ? 'top' : '' }}">#{{ $i + 1 }}</span>
+                    <div class="rank-info">
+                        <div class="rank-name">{{ Str::limit($article->title, 45) }}</div>
+                        <div class="rank-meta">{{ $article->created_at->format('M d, Y') }}</div>
+                    </div>
+                    <div class="rank-stat">
+                        <div class="rank-stat-val" style="color:#0ea5e9;">{{ $article->comments_count }}</div>
+                        <div class="rank-stat-label">comments</div>
+                    </div>
+                </div>
+                @empty
+                <div class="p-4 text-center text-muted">No articles yet</div>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- News Engagement --}}
+        <div class="col-lg-6">
+            <div class="panel">
+                <div class="panel-head">
+                    <h6 class="panel-title">
+                        <i class="bi bi-fire text-danger"></i>
+                        Top News by Engagement
+                    </h6>
+                </div>
+                @forelse($topNewsItems as $i => $news)
+                <div class="rank-row">
+                    <span class="rank-num {{ $i === 0 ? 'top' : '' }}">#{{ $i + 1 }}</span>
+                    <div class="rank-info">
+                        <div class="rank-name">{{ Str::limit($news->title, 35) }}</div>
+                        <div class="rank-meta">by {{ $news->user->name }}</div>
+                    </div>
+                    <div class="news-stats">
+                        <div class="news-stat">
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            {{ $news->likes_count }}
+                        </div>
+                        <div class="news-stat">
+                            <i class="bi bi-chat-fill text-info"></i>
+                            {{ $news->comments_count }}
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="p-4 text-center text-muted">No news yet</div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    {{-- ── ROW 3: Users by Role ── --}}
+    <div class="section-label"><span>Users</span></div>
+    <div class="panel mb-4">
+        <div class="panel-head">
+            <h6 class="panel-title">
+                <i class="bi bi-people-fill text-primary"></i>
+                Users by Role
+            </h6>
+            <span class="panel-count">{{ $totalUsers }} total</span>
+        </div>
+        <div class="row g-0">
+            @php
+                $roleColors = [
+                    'admin'      => ['bg' => '#fef3c7', 'color' => '#92400e', 'bar' => '#f59e0b'],
+                    'author'     => ['bg' => '#e0f2fe', 'color' => '#0284c7', 'bar' => '#0ea5e9'],
+                    'editor'     => ['bg' => '#f0fdf4', 'color' => '#166534', 'bar' => '#22c55e'],
+                    'subscriber' => ['bg' => '#f5f3ff', 'color' => '#6d28d9', 'bar' => '#8b5cf6'],
+                    'creator'    => ['bg' => '#fff7ed', 'color' => '#9a3412', 'bar' => '#f97316'],
+                ];
+            @endphp
+            @foreach($userStats as $stat)
+            @php
+                $pct = $totalUsers > 0 ? round(($stat->total / $totalUsers) * 100) : 0;
+                $rc = $roleColors[$stat->role] ?? ['bg'=>'#f1f5f9','color'=>'#64748b','bar'=>'#94a3b8'];
+            @endphp
+            <div class="col-md-6">
+                <div class="progress-row">
+                    <div class="progress-top">
+                        <span class="progress-label">
+                            <span style="background:{{ $rc['bg'] }};color:{{ $rc['color'] }};
+                                         padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">
+                                {{ ucfirst($stat->role) }}
+                            </span>
+                        </span>
+                        <span class="progress-val">{{ $stat->total }} <span style="color:#94a3b8;font-size:11px;">({{ $pct }}%)</span></span>
+                    </div>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" style="width:{{ $pct }}%;background:{{ $rc['bar'] }};"></div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
 </div>
 @endsection

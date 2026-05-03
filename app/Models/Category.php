@@ -8,13 +8,6 @@ class Category extends Model
 {
     protected $fillable = ['name', 'slug', 'description'];
 
-    public function create()
-{
-    $categories = Category::all();
-
-    return view('posts.create', compact('categories'));
-}
-
     public function contents()
     {
         return $this->hasMany(Content::class);

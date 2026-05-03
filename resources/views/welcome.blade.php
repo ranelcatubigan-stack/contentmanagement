@@ -3,374 +3,695 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS - Content Management System</title>
+    <title>CMS — Nacasabug Creative</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #3B82F6;
-            --primary-dark: #2563EB;
-            --navy: #0F172A;
-            --slate-800: #1E293B;
-            --slate-600: #475569;
-            --bg-light: #F8FAFC;
+            --navy: #0f172a;
+            --navy-soft: #1e293b;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --blue-glow: rgba(59,130,246,0.10);
+            --slate: #64748b;
+            --slate-light: #94a3b8;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --bg: #f8fafc;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--slate-600);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--white);
+            color: var(--navy);
         }
 
-        h1, h2, h3 {
-            color: var(--slate-800);
-        }
-
-        /* Navigation */
+        /* ── NAV ── */
         nav {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
-            padding: 1rem 0;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
         }
 
-        .navbar-brand {
-            font-size: 24px;
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 36px; height: 36px;
+            background: var(--navy);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .nav-name {
+            font-size: 17px;
             font-weight: 700;
             color: var(--navy);
         }
 
-        /* Hero */
-        .hero {
-            background: var(--navy);
-            color: white;
-            padding: 100px 0;
-            text-align: center;
-            min-height: 600px;
+        .nav-name span { color: var(--blue); }
+
+        .nav-links {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
+            list-style: none;
         }
 
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: white;
-            animation: slideInDown 0.8s ease-out;
-        }
-
-        .hero p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            color: #cbd5e1;
-            animation: slideInUp 0.8s ease-out 0.2s backwards;
-        }
-
-        .hero-buttons {
-            animation: slideInUp 0.8s ease-out 0.4s backwards;
-        }
-
-        .btn-hero {
-            padding: 12px 35px;
-            margin: 10px;
-            font-size: 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        .nav-links a {
+            color: var(--slate);
             text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
         }
 
-        .btn-hero-primary {
-            background: var(--primary);
+        .nav-links a:hover { color: var(--navy); background: var(--bg); }
+
+        .btn-login {
+            background: var(--navy) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+        }
+
+        .btn-login:hover { opacity: 0.85; }
+
+        .btn-register {
+            background: var(--blue) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+        }
+
+        .btn-register:hover { background: #2563eb !important; }
+
+        /* ── HERO ── */
+        .hero {
+            background: var(--navy);
+            padding: 100px 40px 90px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -80px; left: 50%;
+            transform: translateX(-50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--blue-light);
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: clamp(36px, 5vw, 64px);
+            font-weight: 800;
             color: white;
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.25);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            position: relative;
         }
 
-        .btn-hero-primary:hover {
-            background: var(--primary-dark);
+        .hero-title .blue { color: var(--blue-light); }
+
+        .hero-sub {
+            font-size: 17px;
+            color: #94a3b8;
+            max-width: 520px;
+            margin: 0 auto 44px;
+            line-height: 1.75;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .btn-cta-primary {
+            background: var(--blue);
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 13px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-cta-primary:hover {
+            background: #2563eb;
+            color: white;
             transform: translateY(-2px);
         }
 
-        .btn-hero-secondary {
-            background: transparent;
+        .btn-cta-ghost {
+            background: rgba(255,255,255,0.07);
             color: white;
-            border: 1px solid #94a3b8;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 13px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: all 0.2s;
         }
 
-        .btn-hero-secondary:hover {
-            background: rgba(255,255,255,0.08);
+        .btn-cta-ghost:hover {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            transform: translateY(-2px);
         }
 
-        /* Animations (unchanged) */
-        @keyframes slideInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* ── SECTION SHARED ── */
+        .section-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
         }
 
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 10px;
+            display: block;
         }
 
-        /* Features */
-        .features {
-            padding: 80px 0;
-            background: var(--bg-light);
+        .section-title {
+            font-size: clamp(26px, 3vw, 40px);
+            font-weight: 800;
+            color: var(--navy);
+            line-height: 1.2;
+            margin-bottom: 12px;
         }
 
-        .features h2 {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 36px;
+        .section-sub {
+            font-size: 15px;
+            color: var(--slate);
+            line-height: 1.7;
+            max-width: 500px;
         }
 
-        .feature-grid {
+        /* ── ROLES ── */
+        .roles-section {
+            padding: 80px 40px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .roles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 48px;
+        }
+
+        .role-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 30px 26px;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+
+        .role-admin::before { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .role-author::before { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+        .role-subscriber::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+
+        .role-icon {
+            width: 46px; height: 46px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .icon-admin { background: #eff6ff; color: #3b82f6; }
+        .icon-author { background: #f5f3ff; color: #8b5cf6; }
+        .icon-subscriber { background: #ecfdf5; color: #10b981; }
+
+        .role-name {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .role-desc {
+            font-size: 13px;
+            color: var(--slate);
+            line-height: 1.65;
+            margin-bottom: 20px;
+        }
+
+        .role-perms {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .role-perms li {
+            font-size: 12.5px;
+            color: var(--slate);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .role-perms li i.bi-check-circle-fill { color: #22c55e; font-size: 12px; }
+        .role-perms li i.bi-x-circle-fill { color: #e2e8f0; font-size: 12px; }
+        .role-perms li.no { color: #cbd5e1; }
+
+        /* ── FEATURES ── */
+        .features-section {
+            padding: 80px 40px;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 48px;
         }
 
         .feature-card {
-            padding: 30px;
-            text-align: center;
-            border-radius: 12px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-            transition: 0.3s;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 24px;
+            transition: all 0.25s;
         }
 
         .feature-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 25px rgba(15, 23, 42, 0.08);
+            border-color: #bfdbfe;
+            box-shadow: 0 8px 24px rgba(59,130,246,0.07);
+            transform: translateY(-3px);
         }
 
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
+        .feat-icon {
+            width: 44px; height: 44px;
+            background: var(--blue-glow);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #EFF6FF;
-            color: var(--primary);
-            font-size: 24px;
+            font-size: 20px;
+            color: var(--blue);
+            margin-bottom: 16px;
         }
 
-        /* Stats */
-        .stats {
-            padding: 60px 0;
-            background: var(--navy);
-            color: white;
-        }
-
-        .stat-number {
-            font-size: 40px;
+        .feat-title {
+            font-size: 15px;
             font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
         }
 
-        .stat-label {
-            color: #cbd5e1;
+        .feat-desc {
+            font-size: 13px;
+            color: var(--slate);
+            line-height: 1.65;
         }
 
-        /* How It Works */
-        .how-it-works {
-            padding: 80px 0;
-        }
-
-        .how-it-works h2 {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 36px;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
-
-        .step-number {
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        /* CTA */
-        .cta {
+        /* ── STATS ── */
+        .stats-section {
             background: var(--navy);
-            color: white;
-            padding: 60px 0;
+            padding: 60px 40px;
+        }
+
+        .stats-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
             text-align: center;
         }
 
-        .btn-light {
-            background: var(--primary);
+        .stat-val {
+            font-size: 44px;
+            font-weight: 800;
             color: white;
+            line-height: 1;
+            margin-bottom: 8px;
         }
 
-        .btn-outline-light {
-            border: 1px solid #94a3b8;
-            color: white;
+        .stat-val span { color: var(--blue-light); }
+        .stat-lbl { font-size: 13px; color: #475569; font-weight: 500; }
+
+        /* ── CTA ── */
+        .cta-section {
+            padding: 80px 40px;
+            background: var(--bg);
+            text-align: center;
+            border-top: 1px solid var(--border);
         }
 
-        .btn-outline-light:hover {
-            background: rgba(255,255,255,0.08);
+        .btn-cta-light {
+            background: white;
+            color: var(--navy);
+            font-weight: 700;
+            font-size: 15px;
+            padding: 13px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
         }
 
-        /* Footer */
+        .btn-cta-light:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+            transform: translateY(-2px);
+        }
+
+        /* ── FOOTER ── */
         footer {
-            background: #020617;
-            color: #94a3b8;
-            padding: 40px 0;
+            background: var(--navy);
+            padding: 28px 40px;
             text-align: center;
         }
 
-        /* Responsive (unchanged) */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .hero p { font-size: 16px; }
+        .footer-text { font-size: 13px; color: #334155; }
+        .footer-text span { color: var(--blue-light); }
+
+        /* REVEAL */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 900px) {
+            .roles-grid, .features-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .roles-grid, .features-grid, .stats-grid { grid-template-columns: 1fr; }
+            .nav-inner { padding: 0 20px; }
         }
     </style>
 </head>
-
 <body>
 
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="bi bi-newspaper"></i> CMS
+<!-- NAV -->
+<nav>
+    <div class="nav-inner">
+        <a href="/" class="nav-brand">
+            <div class="nav-logo"><i class="bi bi-newspaper"></i></div>
+            <span class="nav-name">Nacasabug <span>CMS</span></span>
         </a>
-        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav"></button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li><a class="nav-link" href="#features">Features</a></li>
-                <li><a class="nav-link" href="#how">How It Works</a></li>
-                <li><a class="nav-link btn btn-primary text-white ms-2" href="/login">Login</a></li>
-                <li><a class="nav-link btn btn-outline-primary ms-2" href="/register">Register</a></li>
-            </ul>
-        </div>
+        <ul class="nav-links">
+            <li><a href="#roles">Roles</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="/login" class="btn-login">Login</a></li>
+            <li><a href="/register" class="btn-register">Register</a></li>
+        </ul>
     </div>
 </nav>
 
-<!-- Hero -->
+<!-- HERO -->
 <section class="hero">
-    <div class="container">
-        <h1>Welcome to Nacasabug Creative Content Management System</h1>
-        <p>A Modern Content Management System for Creating, Managing, and Publishing Your Content</p>
-        <div class="hero-buttons">
-            <a href="/login" class="btn-hero btn-hero-primary">Login</a>
-            <a href="/register" class="btn-hero btn-hero-secondary">Register</a>
+    <div class="hero-badge">
+        <i class="bi bi-check-circle-fill"></i>
+        Content Management System
+    </div>
+    <h1 class="hero-title">
+        Write Articles.<br>
+        Publish <span class="blue">News.</span><br>
+        Engage Readers.
+    </h1>
+    <p class="hero-sub">
+        A clean, role-based CMS where Admins and Authors create content —
+        and Subscribers read, like, and comment.
+    </p>
+    <div class="hero-cta">
+        <a href="/login" class="btn-cta-primary">
+            <i class="bi bi-box-arrow-in-right"></i> Sign In
+        </a>
+        <a href="/register" class="btn-cta-ghost">
+            <i class="bi bi-person-plus"></i> Create Account
+        </a>
+    </div>
+</section>
+
+<!-- ROLES -->
+<section class="roles-section" id="roles">
+    <div class="section-wrap">
+        <div class="reveal">
+            <span class="section-label">Who Can Do What</span>
+            <h2 class="section-title">Three roles. Clear permissions.</h2>
+            <p class="section-sub">
+                Every user gets exactly what they need.
+                Admins manage everything, Authors create content, Subscribers engage.
+            </p>
+        </div>
+
+        <div class="roles-grid">
+
+            <!-- ADMIN -->
+            <div class="role-card role-admin reveal">
+                <div class="role-icon icon-admin">
+                    <i class="bi bi-shield-fill-check"></i>
+                </div>
+                <div class="role-name">Admin</div>
+                <p class="role-desc">Full control over the entire system — users, content, and settings.</p>
+                <ul class="role-perms">
+                    <li><i class="bi bi-check-circle-fill"></i> Manage all users</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Create & edit articles</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Publish news posts</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Moderate comments</li>
+                    <li><i class="bi bi-check-circle-fill"></i> View analytics</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Manage categories</li>
+                </ul>
+            </div>
+
+            <!-- AUTHOR -->
+            <div class="role-card role-author reveal" style="transition-delay:0.1s">
+                <div class="role-icon icon-author">
+                    <i class="bi bi-pencil-fill"></i>
+                </div>
+                <div class="role-name">Author</div>
+                <p class="role-desc">Create and manage their own articles and news posts with full editing tools.</p>
+                <ul class="role-perms">
+                    <li class="no"><i class="bi bi-x-circle-fill"></i> Cannot manage users</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Create & edit articles</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Publish news posts</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Comment on content</li>
+                    <li><i class="bi bi-check-circle-fill"></i> View own dashboard</li>
+                    <li class="no"><i class="bi bi-x-circle-fill"></i> No analytics access</li>
+                </ul>
+            </div>
+
+            <!-- SUBSCRIBER -->
+            <div class="role-card role-subscriber reveal" style="transition-delay:0.2s">
+                <div class="role-icon icon-subscriber">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="role-name">Subscriber</div>
+                <p class="role-desc">Read articles and news, engage through likes and comments.</p>
+                <ul class="role-perms">
+                    <li class="no"><i class="bi bi-x-circle-fill"></i> Cannot create content</li>
+                    <li class="no"><i class="bi bi-x-circle-fill"></i> Cannot publish news</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Read all articles</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Read all news</li>
+                    <li><i class="bi bi-check-circle-fill"></i> Like & comment</li>
+                    <li><i class="bi bi-check-circle-fill"></i> View comment history</li>
+                </ul>
+            </div>
+
         </div>
     </div>
 </section>
 
-<!-- Features -->
-<section class="features" id="features">
-    <div class="container">
-        <h2>Powerful Features</h2>
-        <div class="feature-grid">
+<!-- FEATURES -->
+<section class="features-section" id="features">
+    <div class="section-wrap">
+        <div class="reveal">
+            <span class="section-label">Platform Features</span>
+            <h2 class="section-title">Everything in one place</h2>
+            <p class="section-sub">
+                Built for modern content teams with a clean, fast interface.
+            </p>
+        </div>
 
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-file-earmark-text"></i></div>
-                <h3>Content Management</h3>
-                <p>Create, edit, and publish engaging content.</p>
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <div class="feat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+                <div class="feat-title">My Articles</div>
+                <p class="feat-desc">Authors and Admins write, edit, and publish full articles with categories and tags.</p>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-folder"></i></div>
-                <h3>Category & Tags</h3>
-                <p>Organize your content efficiently.</p>
+            <div class="feature-card reveal" style="transition-delay:0.08s">
+                <div class="feat-icon"><i class="bi bi-broadcast-fill"></i></div>
+                <div class="feat-title">My News</div>
+                <p class="feat-desc">Post breaking news with cover photos, categories, and real-time engagement tools.</p>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-image"></i></div>
-                <h3>Media Management</h3>
-                <p>Manage media files in one place.</p>
+            <div class="feature-card reveal" style="transition-delay:0.16s">
+                <div class="feat-icon"><i class="bi bi-heart-fill"></i></div>
+                <div class="feat-title">Likes & Comments</div>
+                <p class="feat-desc">Subscribers react to and comment on both articles and news posts instantly.</p>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-people"></i></div>
-                <h3>User Management</h3>
-                <p>Control access with roles.</p>
+            <div class="feature-card reveal" style="transition-delay:0.24s">
+                <div class="feat-icon"><i class="bi bi-chat-left-text-fill"></i></div>
+                <div class="feat-title">Comment History</div>
+                <p class="feat-desc">Every user can view and manage their own comment history in one place.</p>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-chat-left-text"></i></div>
-                <h3>Comments</h3>
-                <p>Engage with your users.</p>
+            <div class="feature-card reveal" style="transition-delay:0.32s">
+                <div class="feat-icon"><i class="bi bi-people-fill"></i></div>
+                <div class="feat-title">User Management</div>
+                <p class="feat-desc">Admins manage all users, assign roles, and control platform access.</p>
             </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-graph-up"></i></div>
-                <h3>Analytics</h3>
-                <p>Track performance easily.</p>
+            <div class="feature-card reveal" style="transition-delay:0.40s">
+                <div class="feat-icon"><i class="bi bi-bar-chart-fill"></i></div>
+                <div class="feat-title">Analytics Dashboard</div>
+                <p class="feat-desc">Track total users, posts, comments and top content — Admin only.</p>
             </div>
-
         </div>
     </div>
 </section>
 
-<!-- Stats -->
-<section class="stats">
-    <div class="container text-center">
-        <div class="row">
-            <div class="col-md-3"><div class="stat-number">7</div><div>Core Modules</div></div>
-            <div class="col-md-3"><div class="stat-number">5</div><div>User Roles</div></div>
-            <div class="col-md-3"><div class="stat-number">30+</div><div>API Routes</div></div>
-            <div class="col-md-3"><div class="stat-number">100%</div><div>Open Source</div></div>
+<!-- STATS -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="reveal">
+            <div class="stat-val">3<span>+</span></div>
+            <div class="stat-lbl">User Roles</div>
         </div>
-    </div>
-</section>
-
-<!-- How It Works -->
-<section class="how-it-works" id="how">
-    <div class="container">
-        <h2>How It Works</h2>
-        <div class="steps-grid">
-
-            <div><div class="step-number">1</div><h3>Register</h3><p>Create account.</p></div>
-            <div><div class="step-number">2</div><h3>Create</h3><p>Make content.</p></div>
-            <div><div class="step-number">3</div><h3>Organize</h3><p>Use categories.</p></div>
-            <div><div class="step-number">4</div><h3>Publish</h3><p>Go live.</p></div>
-            <div><div class="step-number">5</div><h3>Engage</h3><p>Get feedback.</p></div>
-            <div><div class="step-number">6</div><h3>Analyze</h3><p>Track results.</p></div>
-
+        <div class="reveal" style="transition-delay:0.1s">
+            <div class="stat-val">2<span>+</span></div>
+            <div class="stat-lbl">Content Types</div>
+        </div>
+        <div class="reveal" style="transition-delay:0.2s">
+            <div class="stat-val">30<span>+</span></div>
+            <div class="stat-lbl">API Routes</div>
+        </div>
+        <div class="reveal" style="transition-delay:0.3s">
+            <div class="stat-val">100<span>%</span></div>
+            <div class="stat-lbl">Laravel Powered</div>
         </div>
     </div>
 </section>
 
 <!-- CTA -->
-<section class="cta">
-    <h2>Ready to Get Started?</h2>
-    <a href="/register" class="btn btn-light">Create Account</a>
+<section class="cta-section">
+    <div class="section-wrap">
+        <div class="reveal">
+            <span class="section-label">Get Started</span>
+            <h2 class="section-title" style="text-align:center; margin:0 auto 12px;">
+                Ready to start creating?
+            </h2>
+            <p class="section-sub" style="text-align:center; margin:0 auto 36px;">
+                Sign up as an Author and start publishing articles and news in minutes.
+            </p>
+            <div class="hero-cta">
+                <a href="/register" class="btn-cta-primary">
+                    <i class="bi bi-person-plus-fill"></i> Create Account
+                </a>
+                <a href="/login" class="btn-cta-light">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </a>
+            </div>
+        </div>
+    </div>
 </section>
 
-<!-- Footer -->
+<!-- FOOTER -->
 <footer>
-    <p>© 2024 Content Management System</p>
+    <p class="footer-text">
+        © 2026 <span>Nacasabug Creative CMS</span> — Built with Laravel & Bootstrap
+    </p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+</script>
 </body>
 </html>

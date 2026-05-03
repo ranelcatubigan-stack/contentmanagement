@@ -4,154 +4,421 @@
 
 @section('styles')
 <style>
-    .content-wrap { max-width: 1100px; margin: 0 auto; }
+    :root {
+        --navy: #0f172a;
+        --navy-soft: #1e293b;
+        --blue: #3b82f6;
+        --blue-light: #60a5fa;
+        --blue-glow: rgba(59,130,246,0.10);
+        --slate: #64748b;
+        --slate-light: #94a3b8;
+        --border: #e2e8f0;
+        --white: #ffffff;
+        --bg: #f8fafc;
+    }
 
+    .articles-page {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 0 60px;
+    }
+
+    /* ── Page Header ── */
     .page-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
+        align-items: flex-end;
+        margin-bottom: 28px;
+    }
+
+    .page-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--blue);
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--navy);
+        line-height: 1.2;
+        margin-bottom: 4px;
+    }
+
+    .page-sub {
+        font-size: 13px;
+        color: var(--slate);
+        margin: 0;
     }
 
     .btn-create {
-        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
         color: white;
         border: none;
         border-radius: 12px;
-        padding: 10px 24px;
-        font-weight: 600;
+        padding: 11px 22px;
+        font-weight: 700;
         font-size: 14px;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 8px;
-        transition: opacity 0.2s;
+        transition: all 0.2s;
         text-decoration: none;
         cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
-    .btn-create:hover { opacity: 0.9; color: white; }
+    .btn-create:hover {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+    }
 
+    /* ── Alert ── */
+    .alert-success-custom {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #15803d;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* ── Main Card ── */
     .articles-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 18px;
         overflow: hidden;
+        position: relative;
     }
+
+    .articles-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        border-radius: 18px 18px 0 0;
+    }
+
+    /* ── Table ── */
+    .table { margin: 0; }
 
     .table thead th {
-        background: #f8fafc;
+        background: var(--bg);
         font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #64748b;
-        padding: 14px 16px;
+        letter-spacing: 1px;
+        color: var(--slate);
+        padding: 14px 20px;
         border: none;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
     }
 
     .table tbody td {
-        padding: 14px 16px;
+        padding: 16px 20px;
         vertical-align: middle;
-        border-color: #f1f5f9;
+        border-color: var(--border);
+        font-size: 13.5px;
     }
 
-    .table tbody tr:hover { background: #f8fafc; }
+    .table tbody tr:last-child td { border-bottom: none; }
+    .table tbody tr:hover { background: var(--bg); }
+
+    .article-title-cell {
+        font-weight: 700;
+        color: var(--navy);
+        font-size: 14px;
+        line-height: 1.3;
+    }
+
+    .category-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--slate);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 3px 10px;
+    }
 
     .status-badge {
-        padding: 4px 12px;
-        border-radius: 20px;
         font-size: 11px;
         font-weight: 700;
-        letter-spacing: 0.5px;
+        padding: 4px 11px;
+        border-radius: 20px;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
     }
 
-    .status-published { background: #dcfce7; color: #16a34a; }
-    .status-draft { background: #fef9c3; color: #ca8a04; }
-    .status-hidden { background: #f1f5f9; color: #64748b; }
+    .status-published { background: #dcfce7; color: #15803d; }
+    .status-draft     { background: #fef9c3; color: #a16207; }
+    .status-hidden    { background: #f1f5f9; color: #64748b; }
+
+    .views-cell {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 13px;
+        color: var(--slate);
+        font-weight: 500;
+    }
+
+    .views-cell i { font-size: 12px; color: var(--slate-light); }
+
+    .date-cell {
+        font-size: 12.5px;
+        color: var(--slate-light);
+        white-space: nowrap;
+    }
+
+    /* ── Action Buttons ── */
+    .action-group { display: flex; gap: 6px; align-items: center; }
 
     .action-btn {
         width: 32px; height: 32px;
-        border-radius: 8px;
+        border-radius: 9px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-size: 13px;
         border: none;
+        cursor: pointer;
         transition: all 0.2s;
         text-decoration: none;
+        flex-shrink: 0;
     }
 
-    .action-btn:hover { transform: translateY(-1px); }
-    .btn-view { background: #e0f2fe; color: #0284c7; }
-    .btn-edit { background: #fef9c3; color: #ca8a04; }
+    .action-btn:hover { transform: translateY(-2px); }
+    .btn-view   { background: #e0f2fe; color: #0284c7; }
+    .btn-edit   { background: #fef9c3; color: #ca8a04; }
     .btn-delete { background: #fee2e2; color: #dc2626; }
+    .btn-view:hover   { background: #bae6fd; color: #0369a1; }
+    .btn-edit:hover   { background: #fde68a; color: #92400e; }
+    .btn-delete:hover { background: #fecaca; color: #b91c1c; }
 
-    /* Modal */
+    /* ── Empty State ── */
+    .empty-state {
+        text-align: center;
+        padding: 60px 24px;
+    }
+
+    .empty-icon-wrap {
+        width: 60px; height: 60px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        color: var(--slate-light);
+        margin: 0 auto 16px;
+    }
+
+    .empty-state h5 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 6px;
+    }
+
+    .empty-state p {
+        font-size: 13px;
+        color: var(--slate);
+        margin-bottom: 20px;
+    }
+
+    /* ── Pagination ── */
+    .pagination-wrap {
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination-wrap .pagination .page-link {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--slate);
+        border-color: var(--border);
+        border-radius: 8px !important;
+        margin: 0 2px;
+        padding: 6px 12px;
+    }
+
+    .pagination-wrap .pagination .page-item.active .page-link {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: white;
+    }
+
+    .pagination-wrap .pagination .page-link:hover {
+        background: var(--bg);
+        color: var(--navy);
+        border-color: var(--border);
+    }
+
+    /* ── Modal ── */
     .modal-card {
         border-radius: 20px;
         overflow: hidden;
         border: none;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.14);
     }
 
     .modal-header {
-        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        background: var(--navy);
         color: white;
         border: none;
-        padding: 20px 28px;
+        padding: 22px 28px;
+        position: relative;
     }
 
-    .modal-title { font-weight: 700; font-size: 18px; }
-    .modal-body { padding: 28px; }
-    .modal-footer { padding: 16px 28px; border-top: 1px solid #f1f5f9; }
+    .modal-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    }
+
+    .modal-title {
+        font-weight: 800;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .modal-title-icon {
+        width: 34px; height: 34px;
+        background: rgba(59,130,246,0.2);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: var(--blue-light);
+    }
+
+    .modal-body { padding: 28px; background: var(--white); }
+
+    .modal-footer {
+        padding: 16px 28px;
+        border-top: 1px solid var(--border);
+        background: var(--bg);
+        gap: 10px;
+    }
 
     .form-label {
-        font-weight: 600;
-        font-size: 12px;
+        font-weight: 700;
+        font-size: 11.5px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #475569;
-        margin-bottom: 6px;
+        letter-spacing: 1px;
+        color: var(--slate);
+        margin-bottom: 7px;
+        display: block;
     }
 
     .form-control, .form-select {
-        border: 2px solid #e2e8f0;
+        border: 1.5px solid var(--border);
         border-radius: 10px;
         padding: 10px 14px;
         font-size: 14px;
-        transition: border-color 0.2s;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--navy);
+        background: var(--white);
+        transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .form-control:focus, .form-select:focus {
-        border-color: #38bdf8;
-        box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        outline: none;
     }
 
-    textarea.form-control { min-height: 150px; resize: vertical; }
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #ef4444;
+    }
+
+    textarea.form-control { min-height: 160px; resize: vertical; }
+
+    .select-multi {
+        height: 110px;
+        padding: 8px;
+    }
+
+    .select-multi option {
+        padding: 5px 8px;
+        border-radius: 6px;
+    }
+
+    .select-hint {
+        font-size: 11.5px;
+        color: var(--slate-light);
+        margin-top: 5px;
+    }
+
+    .btn-cancel {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 9px 20px;
+        font-weight: 700;
+        font-size: 13.5px;
+        color: var(--slate);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--navy);
+        color: var(--navy);
+    }
 </style>
 @endsection
 
 @section('content')
-<div class="content-wrap">
+<div class="articles-page">
 
-    {{-- Header --}}
+    {{-- Page Header --}}
     <div class="page-header">
         <div>
-            <h4 class="fw-bold text-dark mb-1">My Articles</h4>
-            <p class="text-muted mb-0" style="font-size:14px;">
-                {{ $contents->total() }} article(s) total
-            </p>
+            <span class="page-label">Article Management</span>
+            <h1 class="page-title">My Articles</h1>
+            <p class="page-sub">{{ $contents->total() }} article{{ $contents->total() !== 1 ? 's' : '' }} total</p>
         </div>
         @if(auth()->user()->role === 'admin' || auth()->user()->role === 'author')
         <button class="btn-create" data-bs-toggle="modal" data-bs-target="#createPostModal">
-            <i class="bi bi-plus-lg"></i> Create New Post
+            <i class="bi bi-plus-lg"></i> New Article
         </button>
         @endif
     </div>
 
     {{-- Success Alert --}}
     @if(session('success'))
-    <div class="alert alert-success border-0 rounded-3 shadow-sm mb-4 d-flex align-items-center">
-        <i class="bi bi-check-circle-fill me-2"></i>
+    <div class="alert-success-custom">
+        <i class="bi bi-check-circle-fill"></i>
         {{ session('success') }}
     </div>
     @endif
@@ -174,39 +441,45 @@
                     @forelse($contents as $content)
                     <tr>
                         <td>
-                            <span class="fw-semibold text-dark">
-                                {{ Str::limit($content->title, 50) }}
+                            <span class="article-title-cell">
+                                {{ Str::limit($content->title, 55) }}
                             </span>
                         </td>
                         <td>
-                            <span class="text-muted">
+                            <span class="category-pill">
+                                <i class="bi bi-folder2" style="font-size:10px;"></i>
                                 {{ $content->category->name ?? 'Uncategorized' }}
                             </span>
                         </td>
                         <td>
-                            @if($content->status === 'published')
-                                <span class="status-badge status-published">Published</span>
-                            @elseif($content->status === 'draft')
-                                <span class="status-badge status-draft">Draft</span>
-                            @else
-                                <span class="status-badge status-hidden">Hidden</span>
-                            @endif
-                        </td>
-                        <td>
-                            <span class="text-muted">
-                                <i class="bi bi-eye me-1"></i>{{ \Cache::get('content_views_total_' . $content->id, 0) }}
+                            @php $status = $content->status ?? 'draft'; @endphp
+                            <span class="status-badge status-{{ $status }}">
+                                @if($status === 'published') ✓ Published
+                                @elseif($status === 'draft') ✎ Draft
+                                @else ⊘ Hidden
+                                @endif
                             </span>
                         </td>
-                        <td class="text-muted">{{ $content->created_at->format('M d, Y') }}</td>
                         <td>
-                            <div class="d-flex gap-1">
+                            <span class="views-cell">
+                                <i class="bi bi-eye"></i>
+                                {{ number_format(\Cache::get('content_views_total_' . $content->id, 0)) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="date-cell">
+                                {{ $content->created_at->format('M d, Y') }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-group">
                                 <a href="{{ route('contents.show', $content) }}"
-                                   class="action-btn btn-view" title="View">
+                                   class="action-btn btn-view" title="View article">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 @if(Auth::user()->can('update', $content))
                                 <a href="{{ route('contents.edit', $content) }}"
-                                   class="action-btn btn-edit" title="Edit">
+                                   class="action-btn btn-edit" title="Edit article">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 @endif
@@ -215,7 +488,7 @@
                                       method="POST" style="display:inline;"
                                       onsubmit="return confirm('Delete this article?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="action-btn btn-delete" title="Delete">
+                                    <button type="submit" class="action-btn btn-delete" title="Delete article">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
@@ -225,10 +498,19 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="bi bi-file-earmark-text"
-                               style="font-size:2.5rem; display:block; margin-bottom:12px; color:#cbd5e1;"></i>
-                            No articles yet. Create your first one!
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-icon-wrap">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+                                <h5>No articles yet</h5>
+                                <p>Start writing and publish your first article.</p>
+                                @if(auth()->user()->role === 'admin' || auth()->user()->role === 'author')
+                                <button class="btn-create" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                                    <i class="bi bi-plus-lg"></i> Create First Article
+                                </button>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @endforelse
@@ -236,9 +518,8 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         @if($contents->hasPages())
-        <div class="d-flex justify-content-center py-4">
+        <div class="pagination-wrap">
             {{ $contents->links() }}
         </div>
         @endif
@@ -246,106 +527,115 @@
 
 </div>
 
-{{-- ================================ --}}
-{{-- CREATE POST MODAL               --}}
-{{-- ================================ --}}
+{{-- ── CREATE ARTICLE MODAL ── --}}
 @if(auth()->user()->role === 'admin' || auth()->user()->role === 'author')
 <div class="modal fade" id="createPostModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content modal-card">
+
             <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-pencil-square me-2"></i> Create New Article
-                </h5>
+                <div class="modal-title">
+                    <div class="modal-title-icon">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+                    Create New Article
+                </div>
                 <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
+                        data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <form action="{{ route('contents.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
-    <div class="row g-3">
+                    <div class="row g-4">
 
-        {{-- Title --}}
-        <div class="col-12">
-            <label class="form-label">Title</label>
-            <input type="text" name="title" 
-                   class="form-control @error('title') is-invalid @enderror"
-                   placeholder="Enter a catchy title..." 
-                   value="{{ old('title') }}" required>
-            @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
-        </div>
+                        {{-- Title --}}
+                        <div class="col-12">
+                            <label class="form-label">Article Title</label>
+                            <input type="text" name="title"
+                                   class="form-control @error('title') is-invalid @enderror"
+                                   placeholder="Enter a compelling title…"
+                                   value="{{ old('title') }}" required>
+                            @error('title')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        {{-- Category --}}
-        <div class="col-md-6">
-            <label class="form-label">Category</label>
-            <select name="category_id" 
-                    class="form-select @error('category_id') is-invalid @enderror">
-                <option value="" disabled selected>Select Category</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" 
-                        @selected(old('category_id') == $category->id)>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('category_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-        </div>
+                        {{-- Category + Status --}}
+                        <div class="col-md-6">
+                            <label class="form-label">Category</label>
+                            <select name="category_id"
+                                    class="form-select @error('category_id') is-invalid @enderror">
+                                <option value="" disabled selected>Select a category</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}"
+                                        @selected(old('category_id') == $category->id)>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        {{-- Status --}}
-        <div class="col-md-6">
-            <label class="form-label">Status</label>
-            <select name="status" 
-                    class="form-select @error('status') is-invalid @enderror">
-                <option value="draft" @selected(old('status') === 'draft')>
-                    Draft (For Approval)
-                </option>
-                <option value="published" @selected(old('status') === 'published')>
-                    Published
-                </option>
-                <option value="hidden" @selected(old('status') === 'hidden')>
-                    Hidden
-                </option>
-            </select>
-            @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
-        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Publish Status</label>
+                            <select name="status"
+                                    class="form-select @error('status') is-invalid @enderror">
+                                <option value="draft"     @selected(old('status') === 'draft')>✎ Draft</option>
+                                <option value="published" @selected(old('status') === 'published')>✓ Published</option>
+                                <option value="hidden"    @selected(old('status') === 'hidden')>⊘ Hidden</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        {{-- Content --}}
-        <div class="col-12">
-            <label class="form-label">Content</label>
-            <textarea name="body" rows="8"
-                      class="form-control @error('body') is-invalid @enderror"
-                      placeholder="Write your story here..." 
-                      required>{{ old('body') }}</textarea>
-            @error('body') <div class="invalid-feedback">{{ $message }}</div> @enderror
-        </div>
+                        {{-- Content --}}
+                        <div class="col-12">
+                            <label class="form-label">Article Content</label>
+                            <textarea name="body"
+                                      class="form-control @error('body') is-invalid @enderror"
+                                      placeholder="Write your article here…"
+                                      required>{{ old('body') }}</textarea>
+                            @error('body')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        {{-- Tags --}}
-        <div class="col-12">
-            <label class="form-label">Tags</label>
-            <select name="tags[]" 
-                    class="form-select @error('tags') is-invalid @enderror"
-                    multiple style="height: 120px;">
-                @foreach($tags as $tag)
-                    <option value="{{ $tag->id }}"
-                        @selected(is_array(old('tags')) && in_array($tag->id, old('tags')))>
-                        {{ $tag->name }}
-                    </option>
-                @endforeach
-            </select>
-            <small class="text-muted">Hold Ctrl / Cmd to select multiple tags</small>
-            @error('tags') <div class="invalid-feedback">{{ $message }}</div> @enderror
-        </div>
+                        {{-- Tags --}}
+                        <div class="col-12">
+                            <label class="form-label">Tags</label>
+                            <select name="tags[]"
+                                    class="form-select select-multi @error('tags') is-invalid @enderror"
+                                    multiple>
+                                @foreach($tags as $tag)
+                                    <option value="{{ $tag->id }}"
+                                        @selected(is_array(old('tags')) && in_array($tag->id, old('tags')))>
+                                        {{ $tag->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="select-hint">Hold Ctrl / ⌘ to select multiple tags</p>
+                            @error('tags')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-    </div>
-</div>
+                    </div>
+                </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
                     <button type="submit" class="btn-create">
-                        <i class="bi bi-send-fill me-1"></i> Publish Article
+                        <i class="bi bi-send-fill"></i> Publish Article
                     </button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>

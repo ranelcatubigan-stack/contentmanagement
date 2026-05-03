@@ -56,6 +56,15 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stat-card" style="background: linear-gradient(135deg, #7c3aed, #a78bfa) !important;">
+                    <div class="card-body text-white">
+                        <h6>Total News</h6>
+                        <h3>{{ $totalNews ?? 0 }}</h3>
+                        <i class="bi bi-newspaper"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- Quick Actions --}}
@@ -90,7 +99,7 @@
                 <div class="card shadow-sm border-0 h-100" style="border-radius:16px;">
                     <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 fw-bold text-dark">
-                            <i class="bi bi-clock-history text-primary me-2"></i>Recent Posts
+                            <i class="bi bi-clock-history text-primary me-2"></i>Recent Articles
                         </h5>
                         <a href="{{ route('contents.index') }}" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
                     </div>
@@ -161,6 +170,67 @@
                         <div class="text-center text-muted py-5">No recent activity</div>
                         @endforelse
                     </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- *** Recent News Table *** --}}
+        <div class="card shadow-sm border-0 mb-4" style="border-radius:16px;">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="bi bi-broadcast-fill text-info me-2"></i>Recent News
+                </h5>
+                <a href="{{ route('news.index') }}" class="btn btn-sm btn-outline-info rounded-pill">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Likes</th>
+                                <th>Comments</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse(\App\Models\News::with(['user','comments'])->latest()->limit(5)->get() as $news)
+                            <tr>
+                                <td class="fw-medium">{{ Str::limit($news->title, 40) }}</td>
+                                <td class="text-muted" style="font-size:13px;">{{ $news->user->name }}</td>
+                                <td>
+                                    <span class="badge" style="background:#e0f2fe; color:#0284c7;">
+                                        {{ $news->category }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="d-flex align-items-center gap-1" style="font-size:13px;">
+                                        <i class="bi bi-heart-fill text-danger"></i>
+                                        {{ $news->likes_count }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="d-flex align-items-center gap-1" style="font-size:13px;">
+                                        <i class="bi bi-chat-fill text-info"></i>
+                                        {{ $news->comments->count() }}
+                                    </span>
+                                </td>
+                                <td class="text-muted" style="font-size:13px;">
+                                    {{ $news->created_at->format('M d, Y') }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="bi bi-newspaper d-block fs-2 mb-2 opacity-25"></i>
+                                    No news yet
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -392,13 +462,11 @@
     opacity: 0.2;
 }
 
-/* Pending alert bar */
 .alert-bar {
     background: #fffbeb;
     border: 1px solid #fcd34d;
 }
 
-/* Pulse dot for pending alert */
 .pulse-dot {
     width: 10px;
     height: 10px;

@@ -17,19 +17,20 @@ class DashboardController extends Controller
 
         // 1. ADMIN DASHBOARD
         if ($user->isAdmin()) {
-            $totalUsers    = User::count();
+           $totalUsers    = User::count();
             $totalContent  = Content::count();
             $totalComments = Comment::count();
-            $totalViews    = Content::sum('views');        // ← ADD THIS
+            $totalViews    = Content::sum('views');
+            $totalNews     = News::count();
             $pendingComments = Comment::where('status', 'pending')->count();
             $totalMedia    = Media::count();
             $recentUsers   = User::latest()->limit(5)->get();
-            $recentContent = Content::with('user')->latest()->limit(5)->get();  // ← add with('user') so $item->user->name works in activity panel
+            $recentContent = Content::with('user')->latest()->limit(5)->get();
             $pendingComments_list = Comment::where('status', 'pending')->latest()->limit(10)->get();
 
             return view('dashboard', compact(
-                'totalUsers', 'totalContent', 'totalComments', 'totalViews',  // ← ADD totalViews here
-                'pendingComments', 'totalMedia', 'recentUsers',
+                'totalUsers', 'totalContent', 'totalComments', 'totalViews',
+                'totalNews', 'pendingComments', 'totalMedia', 'recentUsers',
                 'recentContent', 'pendingComments_list'
             ));
         }
@@ -83,20 +84,24 @@ class DashboardController extends Controller
     }
 
     public function analytics()
-    {
-        $this->authorize('admin');
+{
+    $this->authorize('admin');
 
-        $contentStats      = Content::selectRaw('status, count(*) as total')->groupBy('status')->get();
-        $userStats         = User::selectRaw('role, count(*) as total')->groupBy('role')->get();
-        $commentStats      = Comment::selectRaw('status, count(*) as total')->groupBy('status')->get();
-        $contentByCategory = Content::selectRaw('category_id, count(*) as total')
-                                ->groupBy('category_id')->with('category')->get();
-        $topAuthors        = User::withCount('contents')->orderByDesc('contents_count')->limit(10)->get();
+    $contentStats      = Content::selectRaw('status, count(*) as total')->groupBy('status')->get();
+    $userStats         = User::selectRaw('role, count(*) as total')->groupBy('role')->get();
+    $commentStats      = Comment::selectRaw('status, count(*) as total')->groupBy('status')->get();
+    $contentByCategory = Content::selectRaw('category_id, count(*) as total')
+                            ->groupBy('category_id')->with('category')->get();
+    $topAuthors        = User::withCount('contents')
+                            ->whereIn('role', ['admin','author'])
+                            ->orderByDesc('contents_count')
+                            ->limit(5)
+                            ->get();
 
-        return view('admin.analytics', compact(
-            'contentStats', 'userStats', 'commentStats', 'contentByCategory', 'topAuthors'
-        ));
-    }
+    return view('admin.analytics', compact(
+        'contentStats', 'userStats', 'commentStats', 'contentByCategory', 'topAuthors'
+    ));
+}
 
     public function reports()
     {
