@@ -5,7 +5,7 @@
 
 @section('styles')
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap');
 
     .posts-wrap { font-family: 'DM Sans', sans-serif; }
 
@@ -232,7 +232,6 @@
     }
 
     .cat-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-
     .cat-pill.active { outline: 2px solid currentColor; outline-offset: 2px; }
 
     .cat-count {
@@ -262,63 +261,43 @@
         transform: rotate(-1deg);
     }
 
-    /* ── Search bar ── */
-    .search-wrap {
-        position: relative;
-        margin-bottom: 16px;
-    }
-
-    .search-wrap input {
-        width: 100%;
-        padding: 10px 16px 10px 38px;
-        border-radius: 12px;
-        border: 1.5px solid #e2e8f0;
-        font-size: 13px;
-        transition: border-color 0.2s;
-        outline: none;
-        font-family: 'DM Sans', sans-serif;
-    }
-
-    .search-wrap input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
-
-    .search-wrap i {
-        position: absolute;
-        left: 12px; top: 50%;
-        transform: translateY(-50%);
-        color: #94a3b8;
-        font-size: 14px;
-    }
-
-    /* ── Stats mini ── */
+    /* ── Stats Mini — Analytics Style ── */
     .stats-mini {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 20px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        background: white;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
     .stat-mini-pill {
-        flex: 1;
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 12px;
-        text-align: center;
+        padding: 16px 18px;
+        border-right: 1px solid #dbeafe;
+        text-align: left;
+    }
+
+    .stat-mini-pill:last-child {
+        border-right: none;
     }
 
     .stat-mini-val {
-        font-family: 'Syne', sans-serif;
-        font-size: 1.4rem;
-        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.75rem;
+        font-weight: 700;
         color: #0f172a;
         line-height: 1;
-        margin-bottom: 3px;
+        margin-bottom: 5px;
     }
 
     .stat-mini-label {
         font-size: 10px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.08em;
         color: #94a3b8;
     }
 </style>
@@ -427,10 +406,10 @@
         {{-- ── SIDEBAR ── --}}
         <div class="col-lg-4">
 
-            {{-- Mini Stats --}}
+            {{-- ── Stats Mini — Analytics Style ── --}}
             <div class="stats-mini">
                 <div class="stat-mini-pill">
-                    <div class="stat-mini">{{ $contents->total() }}</div>
+                    <div class="stat-mini-val">{{ $contents->total() }}</div>
                     <div class="stat-mini-label">Total Posts</div>
                 </div>
                 <div class="stat-mini-pill">
@@ -498,40 +477,6 @@
                         </a>
                         @endforeach
                     </div>
-                </div>
-            </div>
-
-            {{-- Latest Posts mini list --}}
-            <div class="sidebar-card">
-                <div class="sidebar-head">
-                    <i class="bi bi-clock-history text-primary"></i>
-                    Recent Posts
-                </div>
-                <div>
-                    @foreach(\App\Models\Content::where('status','published')->latest()->limit(4)->get() as $recent)
-                    <a href="{{ route('posts.public.show', $recent->slug) }}"
-                       class="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none border-bottom"
-                       style="transition:background 0.15s;"
-                       onmouseover="this.style.background='#f8fafc'"
-                       onmouseout="this.style.background='white'">
-                        <div style="width:36px;height:36px;border-radius:10px;
-                                    background:linear-gradient(135deg,#0ea5e9,#2563eb);
-                                    display:flex;align-items:center;justify-content:center;
-                                    color:white;font-weight:800;font-size:13px;flex-shrink:0;">
-                            {{ strtoupper(substr($recent->title, 0, 1)) }}
-                        </div>
-                        <div style="flex:1;min-width:0;">
-                            <div style="font-size:13px;font-weight:600;color:#0f172a;
-                                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                {{ Str::limit($recent->title, 35) }}
-                            </div>
-                            <div style="font-size:11px;color:#94a3b8;">
-                                {{ $recent->created_at->diffForHumans() }}
-                            </div>
-                        </div>
-                        <i class="bi bi-arrow-right" style="color:#cbd5e1;font-size:12px;flex-shrink:0;"></i>
-                    </a>
-                    @endforeach
                 </div>
             </div>
 

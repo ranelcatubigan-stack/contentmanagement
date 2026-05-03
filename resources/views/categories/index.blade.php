@@ -116,7 +116,12 @@
         border-radius: 18px 18px 0 0;
     }
 
-    .table { margin: 0; }
+    /* ── Fixed table layout to eliminate excess column space ── */
+    .table {
+        margin: 0;
+        table-layout: fixed;
+        width: 100%;
+    }
 
     .table thead th {
         background: var(--bg);
@@ -130,6 +135,11 @@
         border-bottom: 1px solid var(--border);
         white-space: nowrap;
     }
+
+    /* Column widths */
+    .table thead th:nth-child(1) { width: 65%; }
+    .table thead th:nth-child(2) { width: 35%; }
+    .table thead th:nth-child(3) { width: 20%; }
 
     .table tbody td {
         padding: 16px 20px;
@@ -147,32 +157,10 @@
         gap: 12px;
     }
 
-    .cat-icon {
-        width: 38px; height: 38px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
-    }
-
     .cat-name {
         font-weight: 700;
         font-size: 14px;
         color: var(--navy);
-    }
-
-    .slug-pill {
-        display: inline-block;
-        background: #fff1f2;
-        color: #e11d48;
-        font-size: 12px;
-        font-weight: 600;
-        font-family: 'JetBrains Mono', 'Courier New', monospace;
-        padding: 3px 10px;
-        border-radius: 8px;
-        border: 1px solid #fecdd3;
     }
 
     .posts-count {
@@ -286,7 +274,6 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Slug</th>
                         <th>Posts</th>
                         <th>Actions</th>
                     </tr>
@@ -302,9 +289,6 @@
                             <div class="cat-name-cell">
                                 <span class="cat-name">{{ $category->name }}</span>
                             </div>
-                        </td>
-                        <td>
-                            <span class="slug-pill">{{ $category->slug }}</span>
                         </td>
                         <td>
                             <span class="posts-count {{ $category->contents_count > 0 ? 'has-posts' : '' }}">
@@ -336,7 +320,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4">
+                        <td colspan="3">
                             <div class="empty-state">
                                 <div class="empty-icon-wrap">
                                     <i class="bi bi-folder-x"></i>
